@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: procjena-rizika
+
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/rizik_db
+    username: root
+    password: nikola2003
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
