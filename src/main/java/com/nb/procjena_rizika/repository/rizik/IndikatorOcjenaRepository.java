@@ -1,0 +1,15 @@
+package com.nb.procjena_rizika.repository.rizik;
+
+import com.nb.procjena_rizika.model.rizik.IndikatorOcjena;
+import com.nb.procjena_rizika.model.rizik.IndikatorRizika;
+import com.nb.procjena_rizika.model.rizik.ProcjenaRizika;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface IndikatorOcjenaRepository extends JpaRepository<IndikatorOcjena, Integer> {
+
+    List<IndikatorOcjena> findByProcjenaRizika(ProcjenaRizika procjenaRizika);
+    //IndikatorOcjena findById(int id);
+
+}

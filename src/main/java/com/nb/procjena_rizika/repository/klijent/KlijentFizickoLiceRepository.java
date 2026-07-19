@@ -8,7 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 public interface KlijentFizickoLiceRepository extends JpaRepository<KlijentFizickoLice, Integer> {
 
     KlijentFizickoLice findByIme(String ime);
-    KlijentPravnoLice findByPrezime(String prezime);
-    KlijentPravnoLice findByMaticniBr(String jmbg);
+    KlijentFizickoLice findByPrezime(String prezime);
+    KlijentFizickoLice findByMaticniBr(String jmbg);
 
 }

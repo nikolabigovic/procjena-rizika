@@ -8,7 +8,7 @@ public interface KlijentPravnoLiceRepository extends JpaRepository<KlijentPravno
 
     KlijentPravnoLice findByNaziv(String naziv);
     KlijentPravnoLice findByPib(String pib);
-    KlijentPravnoLice findById(int id);
+    //KlijentPravnoLice findById(int id);
 
 
 

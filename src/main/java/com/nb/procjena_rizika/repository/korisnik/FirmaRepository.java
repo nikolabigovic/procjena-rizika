@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface FirmaRepository extends JpaRepository<Firma, Integer> {
     Firma findByPib(String pib);
 
-    Firma findById(int id);
+    //Firma findById(int id);
 
     Firma findByNaziv(String naziv);
 
