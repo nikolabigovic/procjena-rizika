@@ -8,7 +8,7 @@ public interface FirmaRepository extends JpaRepository<Firma, Integer> {
 
     //Firma findById(int id);
 
-    Firma findByNaziv(String naziv);
+    Firma findByNazivFirme(String naziv);
 
 
 

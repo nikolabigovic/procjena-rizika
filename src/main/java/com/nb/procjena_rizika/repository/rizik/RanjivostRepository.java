@@ -7,5 +7,5 @@ public interface RanjivostRepository extends JpaRepository<Ranjivost, Integer> {
 
     //Ranjivost findById(int id);
 
-    Ranjivost findBySifraDjelatonosti (String sifraDjelatonosti);
+    Ranjivost findBySifraDjelatnosti (String sifraDjelatonosti);
 }

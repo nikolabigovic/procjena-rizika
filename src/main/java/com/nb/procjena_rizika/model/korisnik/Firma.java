@@ -43,6 +43,6 @@ public class Firma {
     private String email;
 
     @Column(name="posljedice")
-    private double posljedice;
+    private Double posljedice;
 
 }
