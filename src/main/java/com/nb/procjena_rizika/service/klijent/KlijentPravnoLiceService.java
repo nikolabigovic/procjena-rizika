@@ -1,4 +1,4 @@
-package com.nb.procjena_rizika.service;
+package com.nb.procjena_rizika.service.klijent;
 
 import com.nb.procjena_rizika.model.klijent.KlijentPravnoLice;
 import com.nb.procjena_rizika.repository.klijent.KlijentPravnoLiceRepository;

@@ -1,8 +1,8 @@
-package com.nb.procjena_rizika.controller;
+package com.nb.procjena_rizika.controller.klijent;
 
 
 import com.nb.procjena_rizika.model.klijent.KlijentPravnoLice;
-import com.nb.procjena_rizika.service.KlijentPravnoLiceService;
+import com.nb.procjena_rizika.service.klijent.KlijentPravnoLiceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
