@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/klijent")
+@RequestMapping("/api/klijent/pl")
 @RequiredArgsConstructor
 public class KlijentPravnoLiceController {
     private final KlijentPravnoLiceService klijentPravnoLiceService;
@@ -25,6 +25,16 @@ public class KlijentPravnoLiceController {
     public ResponseEntity<List<KlijentPravnoLice>> getAll(){
         return ResponseEntity.ok(klijentPravnoLiceService.findAll());
     }
+
+    @GetMapping("/pib/{pib}")
+    public ResponseEntity<KlijentPravnoLice> getByPib(@PathVariable String pib){
+        return ResponseEntity.ok(klijentPravnoLiceService.findByPib(pib));
+    }
+
+
+    //Treba dodati za sjediste i sifru djelatnosti...
+
+
 
     @PostMapping
     public ResponseEntity<KlijentPravnoLice> create(@RequestBody KlijentPravnoLice klijentPravnoLice) {

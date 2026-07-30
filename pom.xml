@@ -27,7 +27,7 @@
 		<url/>
 	</scm>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>26</java.version>
 		<mysql.version>9.7.0</mysql.version>
 		<data.jpa.version>4.1.0</data.jpa.version>
 	</properties>
@@ -110,6 +110,10 @@
 						</configuration>
 					</execution>
 				</executions>
+				<configuration>
+					<source>25</source>
+					<target>25</target>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

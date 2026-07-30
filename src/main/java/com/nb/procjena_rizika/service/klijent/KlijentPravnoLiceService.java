@@ -25,19 +25,36 @@ public class KlijentPravnoLiceService {
     }
 
     // read
+
     public KlijentPravnoLice findById(int id) {
         return repository.findById(id).orElseThrow();
     }
 
-    public KlijentPravnoLice findByNaziv(String naziv) {
+
+
+    public List<KlijentPravnoLice> findByNaziv(String naziv) {
         return repository.findByNaziv(naziv);
     }
+
+    public List<KlijentPravnoLice> findBySjediste(String sjediste) {
+        return repository.findByNaziv(sjediste);
+    }
+
+    public List<KlijentPravnoLice> findBySifraDjelatnosti(String sifraDjelatnosti) {
+        return repository.findByNaziv(sifraDjelatnosti);
+    }
+
     public KlijentPravnoLice findByPib(String pib) {
         return repository.findByPib(pib);
     }
+
+
+
     public List<KlijentPravnoLice> findAll() {
         return repository.findAll();
     }
+
+
 
     //update
 
@@ -46,6 +63,9 @@ public class KlijentPravnoLiceService {
         klijentPravnoLice.setId(Id);
         return repository.save(klijentPravnoLice);
     }
+
+
+
     //deletee
     public void deleteById(int id) {
         repository.findById(id).orElseThrow();

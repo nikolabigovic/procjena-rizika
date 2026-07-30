@@ -23,7 +23,7 @@ public class KlijentFizickoLiceService {
     //read
 
     public KlijentFizickoLice findById(Integer id) {
-        return repository.findById(id).orElse(null);
+        return repository.findById(id).orElseThrow();
     }
 
     public List<KlijentFizickoLice> findByIme(String ime){
@@ -49,6 +49,7 @@ public class KlijentFizickoLiceService {
     //delete
 
     public void deleteById(Integer id) {
+        repository.findById (id).orElseThrow();
         repository.deleteById(id);
     }
 

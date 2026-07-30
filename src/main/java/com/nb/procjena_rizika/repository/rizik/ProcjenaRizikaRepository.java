@@ -16,5 +16,5 @@ public interface ProcjenaRizikaRepository extends JpaRepository<ProcjenaRizika, 
 
     List<ProcjenaRizika> findByKlijentPravnoLice(KlijentPravnoLice klijentPravnoLice);
 
-
+    List<ProcjenaRizika> findByNivoRizikaId(Integer nivoRizikaId);
 }

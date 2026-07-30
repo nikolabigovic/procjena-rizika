@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/fl")
+@RequestMapping("api/klijent/fl")
 @RequiredArgsConstructor
 public class KlijentFizickoLiceController {
 
@@ -62,7 +62,7 @@ public class KlijentFizickoLiceController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<KlijentFizickoLice> delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         klijentFizickoLiceService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
