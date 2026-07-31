@@ -26,8 +26,8 @@ public class IndikatorOcjenaController {
 
 
     @GetMapping("/{rizik}")
-    public ResponseEntity<List<IndikatorOcjena>> findByIndikator(@PathVariable IndikatorRizika rizik){
-        return ResponseEntity.ok(indikatorOcjenaService.findByIndikator(rizik));
+    public ResponseEntity<List<IndikatorOcjena>> findByIndikator(@PathVariable Integer rizik){
+        return ResponseEntity.ok(indikatorOcjenaService.findByIndikatorId(rizik));
 
     }
 

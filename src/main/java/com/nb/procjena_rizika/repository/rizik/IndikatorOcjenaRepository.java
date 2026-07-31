@@ -11,9 +11,11 @@ import java.util.List;
 
 public interface IndikatorOcjenaRepository extends JpaRepository<IndikatorOcjena, Integer> {
 
-    List<IndikatorOcjena> findByProcjenaRizika(ProcjenaRizika procjenaRizika);
+    List<IndikatorOcjena> findByProcjenaRizikaId(Integer procjenaRizika);
     //IndikatorOcjena findById(int id);
 
-    List<IndikatorOcjena> findByIndikator(IndikatorRizika indikator);
+    List<IndikatorOcjena> findByIndikatorId(Integer indikator);
+
+    List<IndikatorOcjena> findByGrupaFaktoraRizikaId(Integer grupaFaktoraRizikaId);
 
 }

@@ -1,6 +1,7 @@
 package com.nb.procjena_rizika.service.rizik;
 
 
+import com.nb.procjena_rizika.model.rizik.GrupaFaktoraRizika;
 import com.nb.procjena_rizika.model.rizik.IndikatorOcjena;
 import com.nb.procjena_rizika.model.rizik.IndikatorRizika;
 import com.nb.procjena_rizika.model.rizik.ProcjenaRizika;
@@ -24,12 +25,16 @@ public class IndikatorOcjenaService {
 
     //read
 
-    public List<IndikatorOcjena> findByProcjena(ProcjenaRizika procjena) {
-        return repository.findByProcjenaRizika(procjena);
+    public List<IndikatorOcjena> findByProcjenaId(Integer procjena) {
+        return repository.findByProcjenaRizikaId(procjena);
     }
 
-    public List<IndikatorOcjena> findByIndikator(IndikatorRizika indikator) {
-        return repository.findByIndikator(indikator);
+    public List<IndikatorOcjena> findByIndikatorId(Integer indikator) {
+        return repository.findByIndikatorId(indikator);
+    }
+
+    public List<IndikatorOcjena> findByGrupaFaktoraRizikaId(Integer grupaId){
+        return repository.findByGrupaFaktoraRizikaId(grupaId);
     }
 
     // update
