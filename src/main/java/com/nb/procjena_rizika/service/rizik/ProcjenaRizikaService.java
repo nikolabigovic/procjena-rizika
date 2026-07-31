@@ -25,15 +25,15 @@ public class ProcjenaRizikaService {
 
     //read
     public ProcjenaRizika findById(int id) {
-        return repository.findById(id).orElse(null);
+        return repository.findById(id).orElseThrow();
     }
 
-    public List<ProcjenaRizika> findByKorisnik(Korisnik korisnik) {
-        return repository.findByKorisnikKreator(korisnik);
+    public List<ProcjenaRizika> findByKorisnik(Integer korisnik) {
+        return repository.findByKorisnikKreatorId(korisnik);
     }
 
-    public List<ProcjenaRizika> findByKlijent(KlijentPravnoLice klijent) {
-        return repository.findByKlijentPravnoLice(klijent);
+    public List<ProcjenaRizika> findByKlijent(Integer klijent) {
+        return repository.findByKlijentPravnoLiceId(klijent);
     }
 
     public List<ProcjenaRizika> findByNivoRizikaId(Integer nivoRizikaId) {

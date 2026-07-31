@@ -14,4 +14,6 @@ public interface IndikatorOcjenaRepository extends JpaRepository<IndikatorOcjena
     List<IndikatorOcjena> findByProcjenaRizika(ProcjenaRizika procjenaRizika);
     //IndikatorOcjena findById(int id);
 
+    List<IndikatorOcjena> findByIndikator(IndikatorRizika indikator);
+
 }
