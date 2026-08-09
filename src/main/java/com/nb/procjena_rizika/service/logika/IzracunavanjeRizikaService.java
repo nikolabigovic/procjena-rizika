@@ -2,8 +2,10 @@ package com.nb.procjena_rizika.service.logika;
 
 
 import com.nb.procjena_rizika.model.rizik.IndikatorOcjena;
+import com.nb.procjena_rizika.model.rizik.NivoRizika;
 import com.nb.procjena_rizika.model.rizik.Ranjivost;
 import com.nb.procjena_rizika.repository.korisnik.FirmaRepository;
+import com.nb.procjena_rizika.repository.rizik.NivoRizikaRepository;
 import com.nb.procjena_rizika.repository.rizik.RanjivostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,7 @@ public class IzracunavanjeRizikaService {
     private final IzracunavanjePretnjeService izracunavanjePretnjeService;
     private final RanjivostRepository  ranjivostRepository;
     private final FirmaRepository  firmaRepository;
-
+    private final NivoRizikaRepository nivoRizikaRepository;
 
     //fetchovanje ranjivosti po sifri djelatonsti
     public Double getRanjivost(String sifraDjelatnosti){
@@ -43,24 +45,24 @@ public class IzracunavanjeRizikaService {
 
     }
     // klasifikovanje ukupnog rizika
-    public String klasifikacijaRizika(Double ukupanRizik){
-        String klasifikacijaRizik="";
+    public NivoRizika klasifikacijaRizika(Double ukupanRizik){
+
         if (ukupanRizik<=5){
-            klasifikacijaRizik="Niži rizik";
+            return nivoRizikaRepository.findById(1).orElseThrow();
+
         }
         else if(ukupanRizik<=20&&ukupanRizik>5){
-            klasifikacijaRizik="Srednje niži rizik";
+            return nivoRizikaRepository.findById(2).orElseThrow();
         }
         else if(ukupanRizik<=50&&ukupanRizik>20){
-            klasifikacijaRizik="Srednji rizik";
+            return nivoRizikaRepository.findById(3).orElseThrow();
         }
-        else if(ukupanRizik<=95&&ukupanRizik>50){
-            klasifikacijaRizik="Srednje visok rizik";
+        else if(ukupanRizik<=95&&ukupanRizik>50) {
+            return nivoRizikaRepository.findById(4).orElseThrow();
         }
         else if(ukupanRizik<=125&&ukupanRizik>95){
-            klasifikacijaRizik="Visok rizik";
+            return nivoRizikaRepository.findById(5).orElseThrow();
         }
-        else klasifikacijaRizik="Nepoznato stanje!";
-        return klasifikacijaRizik;
+        else return nivoRizikaRepository.findById(6).orElseThrow();
     }
 }

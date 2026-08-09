@@ -29,13 +29,13 @@ public class IndikatorOcjenaService {
         return repository.findByProcjenaRizikaId(procjena);
     }
 
-    public List<IndikatorOcjena> findByIndikatorId(Integer indikator) {
-        return repository.findByIndikatorId(indikator);
+    public List<IndikatorOcjena> findByIndikatorRizikaId(Integer indikator) {
+        return repository.findByIndikatorRizikaId(indikator);
     }
 
-    public List<IndikatorOcjena> findByGrupaFaktoraRizikaId(Integer grupaId){
-        return repository.findByGrupaFaktoraRizikaId(grupaId);
-    }
+//    public List<IndikatorOcjena> findByGrupaFaktoraRizikaId(Integer grupaId){
+//        return repository.findByGrupaFaktoraRizikaId(grupaId);
+//    }
 
     // update
 

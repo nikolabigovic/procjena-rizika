@@ -2,6 +2,7 @@ package com.nb.procjena_rizika.service.logika;
 
 
 import com.nb.procjena_rizika.model.rizik.IndikatorOcjena;
+import com.nb.procjena_rizika.model.rizik.IndikatorRizika;
 import com.nb.procjena_rizika.repository.rizik.GrupaFaktoraRizikaRepository;
 import com.nb.procjena_rizika.repository.rizik.IndikatorRizikaRepository;
 import com.nb.procjena_rizika.service.rizik.IndikatorOcjenaService;
@@ -18,7 +19,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class IzracunavanjePretnjeService {
 
-    private final ProcjenaRizikaService procjenaRizikaService;
+//    private final ProcjenaRizikaService procjenaRizikaService;
     private final GrupaFaktoraRizikaRepository  grupaFaktoraRizikaRepository;
     private final IndikatorOcjenaService  indikatorOcjenaService;
     private final IndikatorRizikaRepository  indikatorRizikaRepository;
@@ -28,8 +29,10 @@ public class IzracunavanjePretnjeService {
     //grupise sve ocjene jedne procjene po grupama
     public Map<Integer, List<IndikatorOcjena>> grupisanjePoFaktorima(List<IndikatorOcjena> lista) {
         Map<Integer, List<IndikatorOcjena>> map = new HashMap<>();
+
         for (IndikatorOcjena ocjena : lista) {
-            map.computeIfAbsent(ocjena.getIndikatorRizika().getGrupaFaktoraRizika().getId(), i -> new ArrayList<>()).add(ocjena);
+            IndikatorRizika indikator=indikatorRizikaRepository.findById(ocjena.getIndikatorRizika().getId()).orElseThrow(); //inicijalizujem ga da  ne bi kada dohvata objekat bila setovana na null grupa faktora rizika
+            map.computeIfAbsent(indikator.getGrupaFaktoraRizika().getId(), i -> new ArrayList<>()).add(ocjena);
         }
         return map;
 

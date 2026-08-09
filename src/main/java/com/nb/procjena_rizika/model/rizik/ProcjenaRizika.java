@@ -11,6 +11,8 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="procjena_rizika")
@@ -23,7 +25,7 @@ public class ProcjenaRizika {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
-    private int id;
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name="klijent_pravno_lice_id")
@@ -34,13 +36,13 @@ public class ProcjenaRizika {
     private Korisnik korisnikKreator;
 
     @Column(name="prijetnja")
-    private double prijetnja;
+    private Double prijetnja;
 
     @Column(name="ranjivost")
-    private double ranjivost;
+    private Double ranjivost;
 
     @Column(name="posljedica")
-    private double posljedica;
+    private Double posljedica;
 
     @Column(name="ukupni_rizik")
     private Double ukupniRizik;
@@ -60,5 +62,9 @@ public class ProcjenaRizika {
 
     @Column(name="obrazlozenje")
     private String obrazlozenje;
+
+    // ovo mi je za mapiranje na create metodu za procjenu rizika. sluzi kao "virtuelna" kolona u tabeli koja ne postoji
+    @OneToMany(mappedBy = "procjenaRizika")
+    private List<IndikatorOcjena> ocjene= new ArrayList<>();
 
 }
