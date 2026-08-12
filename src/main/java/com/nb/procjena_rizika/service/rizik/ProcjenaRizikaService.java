@@ -4,9 +4,11 @@ package com.nb.procjena_rizika.service.rizik;
 import com.nb.procjena_rizika.model.klijent.KlijentPravnoLice;
 import com.nb.procjena_rizika.model.korisnik.Korisnik;
 import com.nb.procjena_rizika.model.rizik.IndikatorOcjena;
+import com.nb.procjena_rizika.model.rizik.NivoRizika;
 import com.nb.procjena_rizika.model.rizik.ProcjenaRizika;
 import com.nb.procjena_rizika.repository.klijent.KlijentPravnoLiceRepository;
 import com.nb.procjena_rizika.repository.rizik.IndikatorOcjenaRepository;
+import com.nb.procjena_rizika.repository.rizik.NivoRizikaRepository;
 import com.nb.procjena_rizika.repository.rizik.ProcjenaRizikaRepository;
 import com.nb.procjena_rizika.service.logika.IzracunavanjePretnjeService;
 import com.nb.procjena_rizika.service.logika.IzracunavanjeRizikaService;
@@ -26,6 +28,7 @@ public class ProcjenaRizikaService {
     private final IzracunavanjePretnjeService izracunavanjePretnjeService;
     private  final IzracunavanjeRizikaService izracunavanjeRizikaService;
     private final KlijentPravnoLiceRepository klijentPravnoLiceRepository;
+    private final NivoRizikaRepository nivoRizikaRepository;
     //create
 
     public ProcjenaRizika create(ProcjenaRizika procjenaRizika) {
@@ -50,8 +53,11 @@ public class ProcjenaRizikaService {
 
         procjenaRizika.setUkupniRizik(ukupniRizik);
         procjenaRizika.setNivoRizika(izracunavanjeRizikaService.klasifikacijaRizika(ukupniRizik));
-
         procjenaRizika.setDatumProcjene(LocalDateTime.now());
+        procjenaRizika.setDatumNaredneProcjene(izracunavanjeRizikaService.izracunavanjeDatumaNaredneProcjene(izracunavanjeRizikaService.klasifikacijaRizika(ukupniRizik)));
+
+
+
 
 
 
