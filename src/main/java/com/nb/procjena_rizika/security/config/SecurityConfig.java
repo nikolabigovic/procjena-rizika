@@ -18,7 +18,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/login").permitAll()
                         .requestMatchers("/api/pr/edit").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST).authenticated());
+                        .requestMatchers(HttpMethod.POST).authenticated()
+                        .requestMatchers(HttpMethod.GET).authenticated()
+                        .requestMatchers(HttpMethod.DELETE).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT).hasRole("ADMIN"));
 
 
         return httpSecurity.build();
