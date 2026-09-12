@@ -30,6 +30,7 @@
 		<java.version>26</java.version>
 		<mysql.version>9.7.0</mysql.version>
 		<data.jpa.version>4.1.0</data.jpa.version>
+		<apache.version>4.5.14</apache.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -63,6 +64,13 @@
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
 			<version>${mysql.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>${apache.version}</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 

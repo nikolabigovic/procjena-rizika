@@ -68,15 +68,4 @@ public class IzracunavanjeRizikaService {
     }
 
 
-    // setovanje datuma sledece procjene na osnovu nivoa rizika:
 
-    public LocalDate izracunavanjeDatumaNaredneProcjene(NivoRizika nivoRizika){
-        var id=nivoRizika.getId();
-        if (id==1 || id==2) return LocalDate.now().plusMonths(12);
-        else if (id==3) return LocalDate.now().plusMonths(6);
-        else if (id==4) return LocalDate.now().plusMonths(3);
-        else if (id==5) return LocalDate.now().plusMonths(1);
-        else return LocalDate.now().plusDays(30);
-    }
-
-}
