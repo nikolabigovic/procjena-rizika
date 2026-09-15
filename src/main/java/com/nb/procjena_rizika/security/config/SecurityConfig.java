@@ -1,7 +1,9 @@
 package com.nb.procjena_rizika.security.config;
 
 
+import com.nb.procjena_rizika.security.filter.JwtAuthFilter;
 import com.nb.procjena_rizika.security.service.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.context.annotation.Bean;
@@ -13,9 +15,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
+
+    @Autowired
+    private JwtAuthFilter jwtAuthFilter;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) {
@@ -28,8 +34,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST).authenticated()
                         .requestMatchers(HttpMethod.GET).authenticated()
                         .requestMatchers(HttpMethod.DELETE).hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT).hasRole("ADMIN"));
-
+                        .requestMatchers(HttpMethod.PUT).hasRole("ADMIN"))
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
 
@@ -53,5 +59,6 @@ public class SecurityConfig {
         return daoAuthenticationProvider;
 
     }
+
 
 }

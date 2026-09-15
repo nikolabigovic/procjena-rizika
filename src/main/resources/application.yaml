@@ -13,3 +13,8 @@ spring:
     error:
       include-message: always
       include-binding-errors: always
+
+jwt:
+  secret: "my-secret-key my-secret-key my-secret-key"
+  ttl: 30
+  refresh: 90
