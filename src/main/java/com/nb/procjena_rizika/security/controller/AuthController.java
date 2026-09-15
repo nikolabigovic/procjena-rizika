@@ -22,7 +22,7 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("login-jtw")
+    @PostMapping("login-jwt")
     public ResponseEntity<JwtDto> loginJwt(@RequestBody LoginDto loginDto, @RequestParam("rememberMe")Boolean rememberMe ) {
         JwtDto response = authService.loginJwt(loginDto, rememberMe);
         return ResponseEntity.ok(response);
