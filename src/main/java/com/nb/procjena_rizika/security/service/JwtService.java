@@ -35,7 +35,7 @@ public class JwtService {
     }
 
     public JwtDto generate(Authentication authentication, Boolean rememberMe) {
-        String subject= authentication.getPrincipal().toString();
+        String subject = ((UserDetails) authentication.getPrincipal()).getUsername();
         String token, refreshToken;
         refreshToken=null;
         token = Jwts.builder()

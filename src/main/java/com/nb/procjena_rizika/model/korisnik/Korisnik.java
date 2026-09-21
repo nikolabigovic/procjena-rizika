@@ -44,7 +44,7 @@ public class Korisnik  implements UserDetails {
     @JoinColumn(name="firma_id")
     private Firma firma;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) //EAGER JE ZBOG JWT TOKENA
     @JoinColumn(name="role_id")
     private Role role;
 
