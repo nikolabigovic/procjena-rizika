@@ -5,9 +5,10 @@ import com.nb.procjena_rizika.model.korisnik.Firma;
 import com.nb.procjena_rizika.model.korisnik.Korisnik;
 import com.nb.procjena_rizika.model.rizik.ProcjenaRizika;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
+@Repository
 public interface ProcjenaRizikaRepository extends JpaRepository<ProcjenaRizika, Integer> {
 
     //ProcjenaRizika findById(int id);
