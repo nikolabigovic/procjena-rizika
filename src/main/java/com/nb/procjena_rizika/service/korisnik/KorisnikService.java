@@ -1,13 +1,19 @@
 package com.nb.procjena_rizika.service.korisnik;
 
 
+import com.nb.procjena_rizika.dto.request.KorisnikRequestDto;
+import com.nb.procjena_rizika.dto.response.KorisnikResponseDto;
+import com.nb.procjena_rizika.mapper.KorisnikMapper;
 import com.nb.procjena_rizika.model.korisnik.Korisnik;
+import com.nb.procjena_rizika.repository.korisnik.FirmaRepository;
 import com.nb.procjena_rizika.repository.korisnik.KorisnikRepository;
+import com.nb.procjena_rizika.repository.korisnik.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -15,48 +21,75 @@ public class KorisnikService {
 
     private final KorisnikRepository repository;
     private final PasswordEncoder passwordEncoder;
+    private final KorisnikMapper korisnikMapper;
+    private final RoleRepository roleRepository;
+    private final FirmaRepository firmaRepository;
 
     //CREATE
 
-    public Korisnik create(Korisnik korisnik) {
+    public KorisnikResponseDto create(KorisnikRequestDto korisnikRequestDto) {
+        Korisnik korisnik = korisnikMapper.toEntity(korisnikRequestDto);
+        korisnik.setRole(roleRepository.findById(korisnikRequestDto.getRoleId()).orElseThrow());
+        korisnik.setFirma(firmaRepository.findById(korisnikRequestDto.getFirmaId()).orElseThrow());
         korisnik.setPassword(passwordEncoder.encode(korisnik.getPassword()));
-        return repository.save(korisnik);
+        repository.save(korisnik);
+        return korisnikMapper.toResponse(korisnik);
     }
 
     // read
 
-    public Korisnik findById(Integer id){
-        return repository.findById(id).orElseThrow();
+    public KorisnikResponseDto findById(Integer id){
+        Korisnik korisnik = repository.findById(id).orElseThrow();
+        return korisnikMapper.toResponse(korisnik);
 
     }
 
-    public List<Korisnik> findByIme(String ime){
-        return repository.findByIme(ime);
+    public List<KorisnikResponseDto> findByIme(String ime){
+        return repository.findByIme(ime).stream().map(korisnikMapper::toResponse).toList();
     }
 
-    public Korisnik findByUsername(String username) {
-        return  repository.findByUsername(username);
+    public KorisnikResponseDto findByUsername(String username) {
+        Korisnik korisnik = repository.findByUsername(username);
+        return korisnikMapper.toResponse(korisnik);
     }
 
-//    public Korisnik findByEmail(String email) {
-//        return  repository.findByEmail(email);
-//    } NE ZNAM OCU LI KORISTIT OVO NE SJECAM SE NI STO SAM GA NAPRAVIO NA REPO SLOJU???
-    public List<Korisnik> findAll(){
-        return repository.findAll();
+    public List<KorisnikResponseDto> findAll(){
+        return repository.findAll().stream().map(korisnikMapper::toResponse).toList();
     }
 
     //UPDATE
 
-    public Korisnik update(Integer id, Korisnik korisnik) {
+    public KorisnikResponseDto update(Integer id, KorisnikRequestDto dto) {
 
         Korisnik postojeci = repository.findById ( id).orElseThrow();
-        korisnik.setId(id);
-        if (korisnik.getPassword()==null || korisnik.getPassword().isBlank()){
-            korisnik.setPassword(postojeci.getPassword());
+
+        if (dto.getIme() != null) {
+            postojeci.setIme(dto.getIme());
         }
-        else{
-        korisnik.setPassword(passwordEncoder.encode(korisnik.getPassword()));}
-        return repository.save(korisnik);
+        if (dto.getPrezime() != null) {
+            postojeci.setPrezime(dto.getPrezime());
+        }
+        if (dto.getEmail() != null) {
+            postojeci.setEmail(dto.getEmail());
+        }
+        if (dto.getUsername() != null) {
+            postojeci.setUsername(dto.getUsername());
+        }
+
+        if (dto.getPassword()!=null && !dto.getPassword().isBlank()){
+            postojeci.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+
+        if (dto.getRoleId()!=null){
+            postojeci.setRole(roleRepository.findById(dto.getRoleId()).orElseThrow());
+        }
+
+        if (dto.getFirmaId()!=null){
+            postojeci.setFirma(firmaRepository.findById(dto.getFirmaId()).orElseThrow());
+        }
+
+        repository.save(postojeci);
+        return korisnikMapper.toResponse(postojeci);
     }
 
     //delete
