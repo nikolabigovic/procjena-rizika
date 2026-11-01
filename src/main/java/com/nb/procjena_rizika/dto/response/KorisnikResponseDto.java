@@ -1,4 +1,5 @@
-package com.nb.procjena_rizika.dto;
+package com.nb.procjena_rizika.dto.response;
+
 
 import lombok.*;
 
@@ -7,13 +8,17 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class KorisnikDto {
+public class KorisnikResponseDto {
 
+    private Integer id;
     private String ime;
     private String prezime;
     private String username;
     private String email;
-    private FirmaDto firmaDto;
+    private String roleNaziv;
+    private Integer firmaId;
+
+
 
 
 }
