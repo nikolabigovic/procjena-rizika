@@ -1,6 +1,8 @@
 package com.nb.procjena_rizika.controller.korisnik;
 
 
+import com.nb.procjena_rizika.dto.request.FirmaRequestDto;
+import com.nb.procjena_rizika.dto.response.FirmaResponseDto;
 import com.nb.procjena_rizika.model.korisnik.Firma;
 import com.nb.procjena_rizika.repository.korisnik.FirmaRepository;
 import com.nb.procjena_rizika.service.korisnik.FirmaService;
@@ -19,34 +21,44 @@ public class FirmaController {
     private final FirmaService firmaService;
 
     @PostMapping
-    public ResponseEntity<Firma> create(@RequestBody Firma firma){
+    public ResponseEntity<FirmaResponseDto> create(@RequestBody FirmaRequestDto firma){
         return new ResponseEntity<>(firmaService.create(firma), HttpStatus.CREATED);
     }
 
 
-
+    @GetMapping("/all")
+    public ResponseEntity<List<FirmaResponseDto>> getAll(){
+        return ResponseEntity.ok(firmaService.findAll());
+    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Firma> findById(@PathVariable Integer id){
+    public ResponseEntity<FirmaResponseDto> findById(@PathVariable Integer id){
         return ResponseEntity.ok(firmaService.findById(id));
     }
 
     @GetMapping("/pib/{pib}")
-    public ResponseEntity<Firma> findByPib(@PathVariable String pib){
+    public ResponseEntity<FirmaResponseDto> findByPib(@PathVariable String pib){
         return ResponseEntity.ok(firmaService.findByPib(pib));
     }
 
     @GetMapping("/naziv/{naziv}")
-    public ResponseEntity<List<Firma>> findByNaziv(@PathVariable String naziv){
+    public ResponseEntity<List<FirmaResponseDto>> findByNaziv(@PathVariable String naziv){
         return ResponseEntity.ok(firmaService.findByNaziv(naziv));
     }
-    //treba i ovdje dodatri sjediste i sif djelatnosti
+    @GetMapping("/sjediste/{sjediste}")
+    public ResponseEntity<List<FirmaResponseDto>> findBySjediste(@PathVariable String sjediste){
+        return ResponseEntity.ok(firmaService.findBySjediste(sjediste));
+    }
+    @GetMapping("/sifra/{sifra}")
+    public ResponseEntity<List<FirmaResponseDto>> findBySifraDjelatnosti(@PathVariable String sifra){
+        return ResponseEntity.ok(firmaService.findBySifraDjelatnosti(sifra));
+    }
 
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<Firma> update(@PathVariable Integer id, @RequestBody Firma firma){
-        return ResponseEntity.ok(firmaService.update(id, firma));
+    public ResponseEntity<FirmaResponseDto> update(@PathVariable Integer id, @RequestBody FirmaRequestDto firmaRequestDto){
+        return ResponseEntity.ok(firmaService.update(id, firmaRequestDto));
     }
 
 

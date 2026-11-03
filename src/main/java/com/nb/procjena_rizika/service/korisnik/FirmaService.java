@@ -1,6 +1,9 @@
 package com.nb.procjena_rizika.service.korisnik;
 
 
+import com.nb.procjena_rizika.dto.request.FirmaRequestDto;
+import com.nb.procjena_rizika.dto.response.FirmaResponseDto;
+import com.nb.procjena_rizika.mapper.FirmaMapper;
 import com.nb.procjena_rizika.model.korisnik.Firma;
 import com.nb.procjena_rizika.repository.korisnik.FirmaRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,45 +16,53 @@ import java.util.List;
 public class FirmaService {
 
     private final FirmaRepository repository;
-
+    private final FirmaMapper mapper;
     //create
 
-    public Firma create(Firma firma) {
-        return repository.save(firma);
+    public FirmaResponseDto create(FirmaRequestDto firmaRequestDto) {
+        Firma firma = mapper.toEntity(firmaRequestDto);
+        repository.save(firma);
+        return mapper.toResponse(firma);
     }
 
     //read
 
-    public Firma findById(Integer id) {
-        return repository.findById(id).orElseThrow();
+    public FirmaResponseDto findById(Integer id) {
+        Firma firma = repository.findById (id).orElseThrow();
+        return mapper.toResponse(firma);
+
     }
 
-    public List<Firma> findAll() {
-        return repository.findAll();
+    public FirmaResponseDto findByPib(String pib) {
+        Firma firma = repository.findByPib (pib);
+        return mapper.toResponse(firma);
     }
 
-    public List<Firma> findByNaziv(String naziv) {
-        return repository.findByNazivFirme(naziv);
+    public List<FirmaResponseDto> findAll() {
+        return repository.findAll().stream().map(mapper::toResponse).toList();
     }
 
-    public Firma findByPib(String pib) {
-        return repository.findByPib(pib);
+    public List<FirmaResponseDto> findByNaziv(String naziv) {
+        return repository.findByNazivFirme(naziv).stream().map(mapper::toResponse).toList();
     }
 
-    public List<Firma> findBySjediste(String sjediste ) {
-        return repository.findBySjediste(sjediste);
+
+    public List<FirmaResponseDto> findBySjediste(String sjediste ) {
+        return repository.findBySjediste(sjediste).stream().map(mapper::toResponse).toList();
     }
 
-    public List<Firma> findBySifraDjelatnosti(String sifraDjelatnosti) {
-        return repository.findBySifraDjelatnosti(sifraDjelatnosti);
+    public List<FirmaResponseDto> findBySifraDjelatnosti(String sifraDjelatnosti) {
+        return repository.findBySifraDjelatnosti(sifraDjelatnosti).stream().map(mapper::toResponse).toList();
     }
 
     //update
 
-    public Firma update(Integer id, Firma firma) {
-        repository.findById ( id).orElseThrow();
-        firma.setId(id);
-        return repository.save(firma);
+    public FirmaResponseDto update(Integer id, FirmaRequestDto firmaRequestDto) {
+        Firma postojeca = repository.findById (id).orElseThrow();
+
+        mapper.updateEntity(postojeca, firmaRequestDto);
+        repository.save(postojeca);
+        return mapper.toResponse(postojeca);
     }
 
     //delete
