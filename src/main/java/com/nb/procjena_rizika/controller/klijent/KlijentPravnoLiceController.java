@@ -1,6 +1,8 @@
 package com.nb.procjena_rizika.controller.klijent;
 
 
+import com.nb.procjena_rizika.dto.request.KPLRequestDto;
+import com.nb.procjena_rizika.dto.response.KPLResponseDto;
 import com.nb.procjena_rizika.model.klijent.KlijentPravnoLice;
 import com.nb.procjena_rizika.service.klijent.KlijentPravnoLiceService;
 import lombok.RequiredArgsConstructor;
@@ -16,33 +18,44 @@ import java.util.List;
 public class KlijentPravnoLiceController {
     private final KlijentPravnoLiceService klijentPravnoLiceService;
 
+    @PostMapping
+    public ResponseEntity<KPLResponseDto> create(@RequestBody KPLRequestDto klijentPravnoLice) {
+        return new ResponseEntity<>(klijentPravnoLiceService.create(klijentPravnoLice), HttpStatus.CREATED);
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<KlijentPravnoLice> getById(@PathVariable Integer id){
+    public ResponseEntity<KPLResponseDto> getById(@PathVariable Integer id){
         return ResponseEntity.ok(klijentPravnoLiceService.findById(id));
     }
 
-    @GetMapping
-    public ResponseEntity<List<KlijentPravnoLice>> getAll(){
+    @GetMapping("/all")
+    public ResponseEntity<List<KPLResponseDto>> getAll(){
         return ResponseEntity.ok(klijentPravnoLiceService.findAll());
     }
 
     @GetMapping("/pib/{pib}")
-    public ResponseEntity<KlijentPravnoLice> getByPib(@PathVariable String pib){
+    public ResponseEntity <KPLResponseDto> getByPib(@PathVariable String pib){
         return ResponseEntity.ok(klijentPravnoLiceService.findByPib(pib));
     }
 
-
-    //Treba dodati za sjediste i sifru djelatnosti...
-
-
-
-    @PostMapping
-    public ResponseEntity<KlijentPravnoLice> create(@RequestBody KlijentPravnoLice klijentPravnoLice) {
-        return new ResponseEntity<>(klijentPravnoLiceService.create(klijentPravnoLice), HttpStatus.CREATED);
+    @GetMapping ("/sjediste/{sjediste}")
+    public ResponseEntity<List<KPLResponseDto>> getBySjediste(@PathVariable String sjediste){
+        return ResponseEntity.ok(klijentPravnoLiceService.findBySjediste(sjediste));
     }
 
+    @GetMapping("/sifra/{sifra}")
+    public ResponseEntity<List<KPLResponseDto>> getBySifra(@PathVariable String sifra){
+        return ResponseEntity.ok(klijentPravnoLiceService.findBySifraDjelatnosti(sifra));
+    }
+
+
+
+
+
+
+
     @PutMapping("/{id}")
-    public ResponseEntity<KlijentPravnoLice> update(@PathVariable Integer id, @RequestBody KlijentPravnoLice klijentPravnoLice) {
+    public ResponseEntity<KPLResponseDto> update(@PathVariable Integer id, @RequestBody KPLRequestDto klijentPravnoLice) {
         return ResponseEntity.ok(klijentPravnoLiceService.update(id,klijentPravnoLice));
     }
 
