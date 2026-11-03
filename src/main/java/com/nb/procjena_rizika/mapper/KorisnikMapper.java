@@ -3,37 +3,20 @@ package com.nb.procjena_rizika.mapper;
 import com.nb.procjena_rizika.dto.request.KorisnikRequestDto;
 import com.nb.procjena_rizika.dto.response.KorisnikResponseDto;
 import com.nb.procjena_rizika.model.korisnik.Korisnik;
-import org.springframework.stereotype.Component;
+import org.mapstruct.*;
 
-@Component
-public class KorisnikMapper {
+@Mapper(componentModel = "spring")
+public interface KorisnikMapper {
 
-    public KorisnikResponseDto toResponse (Korisnik korisnik) {
-        KorisnikResponseDto korisnikResponseDto = new KorisnikResponseDto();
+    @Mapping(target="id", ignore = true)
+    Korisnik toEntity(KorisnikRequestDto korisnikRequestDto);
 
-        korisnikResponseDto.setId(korisnik.getId());
-        korisnikResponseDto.setUsername(korisnik.getUsername());
-        korisnikResponseDto.setEmail(korisnik.getEmail());
-        korisnikResponseDto.setIme(korisnik.getIme());
-        korisnikResponseDto.setPrezime(korisnik.getPrezime());
-        if (korisnik.getRole()!=null){
-            korisnikResponseDto.setRoleNaziv(korisnik.getRole().getNaziv());
-        }
-        if (korisnik.getFirma()!=null){
-            korisnikResponseDto.setFirmaId(korisnik.getFirma().getId());
-        }
+    @Mapping(source = "role.naziv", target="roleNaziv" )
+    @Mapping(source="firma.id", target="firmaId")
+    KorisnikResponseDto toResponse(Korisnik korisnik);
 
-        return korisnikResponseDto;
-    }
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target="password", ignore = true)
+    void updateEntity(@MappingTarget Korisnik korisnik, KorisnikRequestDto korisnikRequestDto);
 
-    public Korisnik toEntity(KorisnikRequestDto korisnikRequestDto) {
-        Korisnik korisnik = new Korisnik();
-        korisnik.setUsername(korisnikRequestDto.getUsername());
-        korisnik.setEmail(korisnikRequestDto.getEmail());
-        korisnik.setIme(korisnikRequestDto.getIme());
-        korisnik.setPrezime(korisnikRequestDto.getPrezime());
-        korisnik.setPassword(korisnikRequestDto.getPassword());
-
-        return korisnik;
-    }
 }

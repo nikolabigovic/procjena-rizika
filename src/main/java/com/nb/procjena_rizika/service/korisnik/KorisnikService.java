@@ -4,6 +4,7 @@ package com.nb.procjena_rizika.service.korisnik;
 import com.nb.procjena_rizika.dto.request.KorisnikRequestDto;
 import com.nb.procjena_rizika.dto.response.KorisnikResponseDto;
 import com.nb.procjena_rizika.mapper.KorisnikMapper;
+import com.nb.procjena_rizika.mapper.KorisnikMapperManual;
 import com.nb.procjena_rizika.model.korisnik.Korisnik;
 import com.nb.procjena_rizika.repository.korisnik.FirmaRepository;
 import com.nb.procjena_rizika.repository.korisnik.KorisnikRepository;
@@ -63,18 +64,20 @@ public class KorisnikService {
 
         Korisnik postojeci = repository.findById ( id).orElseThrow();
 
-        if (dto.getIme() != null) {
-            postojeci.setIme(dto.getIme());
-        }
-        if (dto.getPrezime() != null) {
-            postojeci.setPrezime(dto.getPrezime());
-        }
-        if (dto.getEmail() != null) {
-            postojeci.setEmail(dto.getEmail());
-        }
-        if (dto.getUsername() != null) {
-            postojeci.setUsername(dto.getUsername());
-        }
+//        if (dto.getIme() != null) {
+//            postojeci.setIme(dto.getIme());
+//        }
+//        if (dto.getPrezime() != null) {
+//            postojeci.setPrezime(dto.getPrezime());
+//        }
+//        if (dto.getEmail() != null) {
+//            postojeci.setEmail(dto.getEmail());
+//        }
+//        if (dto.getUsername() != null) {
+//            postojeci.setUsername(dto.getUsername());
+//        }
+
+        korisnikMapper.updateEntity(postojeci, dto);   //da se ne mora rucno kao gore
 
         if (dto.getPassword()!=null && !dto.getPassword().isBlank()){
             postojeci.setPassword(passwordEncoder.encode(dto.getPassword()));
