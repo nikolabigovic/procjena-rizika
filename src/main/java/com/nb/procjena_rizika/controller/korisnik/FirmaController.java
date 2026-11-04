@@ -6,6 +6,7 @@ import com.nb.procjena_rizika.dto.response.FirmaResponseDto;
 import com.nb.procjena_rizika.model.korisnik.Firma;
 import com.nb.procjena_rizika.repository.korisnik.FirmaRepository;
 import com.nb.procjena_rizika.service.korisnik.FirmaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class FirmaController {
     private final FirmaService firmaService;
 
     @PostMapping
-    public ResponseEntity<FirmaResponseDto> create(@RequestBody FirmaRequestDto firma){
+    public ResponseEntity<FirmaResponseDto> create(@Valid @RequestBody FirmaRequestDto firma){
         return new ResponseEntity<>(firmaService.create(firma), HttpStatus.CREATED);
     }
 

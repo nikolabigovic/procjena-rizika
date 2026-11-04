@@ -31,7 +31,7 @@ public class ErrorResponse {
         this.path = path;
     }
 
-    public ErrorResponse(int status, String error, String message, String path, Map<String, String> validationErrors) {
+    public ErrorResponse(int status, String error, String message, String path, Map<String, String> validationErrors) { //za izlistavnje polja na kojima je greska
         this(status, error, message, path);
         this.validationErrors = validationErrors;
     }

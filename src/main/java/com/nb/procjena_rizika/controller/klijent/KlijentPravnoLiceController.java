@@ -5,6 +5,7 @@ import com.nb.procjena_rizika.dto.request.KPLRequestDto;
 import com.nb.procjena_rizika.dto.response.KPLResponseDto;
 import com.nb.procjena_rizika.model.klijent.KlijentPravnoLice;
 import com.nb.procjena_rizika.service.klijent.KlijentPravnoLiceService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,8 @@ public class KlijentPravnoLiceController {
     private final KlijentPravnoLiceService klijentPravnoLiceService;
 
     @PostMapping
-    public ResponseEntity<KPLResponseDto> create(@RequestBody KPLRequestDto klijentPravnoLice) {
+
+    public ResponseEntity<KPLResponseDto> create(@Valid  @RequestBody KPLRequestDto klijentPravnoLice) {
         return new ResponseEntity<>(klijentPravnoLiceService.create(klijentPravnoLice), HttpStatus.CREATED);
     }
 

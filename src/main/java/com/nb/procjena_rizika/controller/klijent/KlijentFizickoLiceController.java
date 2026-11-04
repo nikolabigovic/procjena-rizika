@@ -6,6 +6,7 @@ import com.nb.procjena_rizika.model.klijent.KlijentFizickoLice;
 import com.nb.procjena_rizika.model.klijent.KlijentPravnoLice;
 import com.nb.procjena_rizika.service.klijent.KlijentFizickoLiceService;
 import com.nb.procjena_rizika.service.klijent.KlijentPravnoLiceService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +28,13 @@ public class KlijentFizickoLiceController {
 
 
     @GetMapping("/{id}")
+
     public ResponseEntity<KFLResponseDto> getById(@PathVariable Integer id) {
         return ResponseEntity.ok(klijentFizickoLiceService.findById(id));
     }
 
     @GetMapping("/jmbg/{jmbg}")
+
     public ResponseEntity<KFLResponseDto> getByJmbg(@PathVariable String jmbg) {
         return ResponseEntity.ok(klijentFizickoLiceService.findByMaticniBr(jmbg));
     }
@@ -53,7 +56,8 @@ public class KlijentFizickoLiceController {
 
 
     @PostMapping
-    public ResponseEntity<KFLResponseDto> create(@RequestBody KFLRequestDto klijentFizickoLice) {
+
+    public ResponseEntity<KFLResponseDto> create(@Valid @RequestBody KFLRequestDto klijentFizickoLice) {
         return new ResponseEntity<>(klijentFizickoLiceService.create(klijentFizickoLice), HttpStatus.CREATED);
     }
 

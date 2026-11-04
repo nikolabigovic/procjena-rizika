@@ -36,6 +36,7 @@
 		<jjwt-jackson.version>0.13.0</jjwt-jackson.version>
 		<mapstruct.version>1.6.3</mapstruct.version>
 		<lombok.mapstruct.binding.version>0.2.0</lombok.mapstruct.binding.version>
+		<spring.starter.validation.version>4.1.0</spring.starter.validation.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -103,6 +104,13 @@
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
 			<version>${mapstruct.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+			<version>${spring.starter.validation.version}</version>
 			<scope>compile</scope>
 		</dependency>
 

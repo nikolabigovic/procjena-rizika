@@ -4,6 +4,7 @@ package com.nb.procjena_rizika.controller.korisnik;
 import com.nb.procjena_rizika.dto.request.KorisnikRequestDto;
 import com.nb.procjena_rizika.dto.response.KorisnikResponseDto;
 import com.nb.procjena_rizika.service.korisnik.KorisnikService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class KorisnikController {
     private final KorisnikService korisnikService;
     //create
     @PostMapping
-    public ResponseEntity<KorisnikResponseDto> create(@RequestBody KorisnikRequestDto korisnik) {
+    public ResponseEntity<KorisnikResponseDto> create(@Valid @RequestBody  KorisnikRequestDto korisnik) {
         return new ResponseEntity<>(korisnikService.create(korisnik), HttpStatus.CREATED);
     }
 
