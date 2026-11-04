@@ -1,5 +1,7 @@
 package com.nb.procjena_rizika.controller.klijent;
 
+import com.nb.procjena_rizika.dto.request.KFLRequestDto;
+import com.nb.procjena_rizika.dto.response.KFLResponseDto;
 import com.nb.procjena_rizika.model.klijent.KlijentFizickoLice;
 import com.nb.procjena_rizika.model.klijent.KlijentPravnoLice;
 import com.nb.procjena_rizika.service.klijent.KlijentFizickoLiceService;
@@ -25,24 +27,24 @@ public class KlijentFizickoLiceController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<KlijentFizickoLice> getById(@PathVariable Integer id) {
+    public ResponseEntity<KFLResponseDto> getById(@PathVariable Integer id) {
         return ResponseEntity.ok(klijentFizickoLiceService.findById(id));
     }
 
     @GetMapping("/jmbg/{jmbg}")
-    public ResponseEntity<KlijentFizickoLice> getByJmbg(@PathVariable String jmbg) {
+    public ResponseEntity<KFLResponseDto> getByJmbg(@PathVariable String jmbg) {
         return ResponseEntity.ok(klijentFizickoLiceService.findByMaticniBr(jmbg));
     }
 
     @GetMapping("/ime/{ime}")
-    public ResponseEntity <List<KlijentFizickoLice>> getByIme(@PathVariable String ime) {
-        List<KlijentFizickoLice> lista= klijentFizickoLiceService.findByIme(ime);
+    public ResponseEntity <List<KFLResponseDto>> getByIme(@PathVariable String ime) {
+        List<KFLResponseDto> lista= klijentFizickoLiceService.findByIme(ime);
         return ResponseEntity.ok(lista);
     }
 
     @GetMapping("/prezime/{prezime}")
-    public ResponseEntity< List<KlijentFizickoLice>> getByPrezime(@PathVariable String prezime) {
-        List<KlijentFizickoLice> lista= klijentFizickoLiceService.findByPrezime(prezime);
+    public ResponseEntity< List<KFLResponseDto>> getByPrezime(@PathVariable String prezime) {
+        List<KFLResponseDto> lista= klijentFizickoLiceService.findByPrezime(prezime);
         return ResponseEntity.ok(lista);
     }
 
@@ -51,12 +53,12 @@ public class KlijentFizickoLiceController {
 
 
     @PostMapping
-    public ResponseEntity<KlijentFizickoLice> create(@RequestBody KlijentFizickoLice klijentFizickoLice) {
+    public ResponseEntity<KFLResponseDto> create(@RequestBody KFLRequestDto klijentFizickoLice) {
         return new ResponseEntity<>(klijentFizickoLiceService.create(klijentFizickoLice), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<KlijentFizickoLice> update(@PathVariable Integer id, @RequestBody KlijentFizickoLice klijentFizickoLice) {
+    public ResponseEntity<KFLResponseDto> update(@PathVariable Integer id, @RequestBody KFLRequestDto klijentFizickoLice) {
         return ResponseEntity.ok(klijentFizickoLiceService.update(id, klijentFizickoLice));
 
     }

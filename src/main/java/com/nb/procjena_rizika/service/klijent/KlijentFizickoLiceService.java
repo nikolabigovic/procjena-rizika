@@ -1,7 +1,12 @@
 package com.nb.procjena_rizika.service.klijent;
 
+import com.nb.procjena_rizika.dto.request.KFLRequestDto;
+import com.nb.procjena_rizika.dto.response.KFLResponseDto;
+import com.nb.procjena_rizika.mapper.KlijentFizickoLiceMapper;
 import com.nb.procjena_rizika.model.klijent.KlijentFizickoLice;
 import com.nb.procjena_rizika.repository.klijent.KlijentFizickoLiceRepository;
+import com.nb.procjena_rizika.repository.klijent.KlijentPravnoLiceRepository;
+import com.nb.procjena_rizika.repository.klijent.StatusFizickogLicaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,38 +17,54 @@ import java.util.List;
 public class KlijentFizickoLiceService {
 
    private final KlijentFizickoLiceRepository repository;
-
+   private final KlijentFizickoLiceMapper mapper;
+   private final StatusFizickogLicaRepository statusFizickogLicaRepository;
+   private final KlijentPravnoLiceRepository klijentPravnoLiceRepository;
     //create
 
-    public KlijentFizickoLice create(KlijentFizickoLice klijentFizickoLice) {
-        return repository.save(klijentFizickoLice);
+    public KFLResponseDto create(KFLRequestDto kflRequestDto) {
+        KlijentFizickoLice kfl = mapper.toEntity(kflRequestDto);
+        kfl.setStatus(statusFizickogLicaRepository.findById(kflRequestDto.getStatusId()).orElseThrow());
+        kfl.setPravnoLice(klijentPravnoLiceRepository.findById(kflRequestDto.getPravnoLiceId()).orElseThrow());
+
+        repository.save(kfl);
+        return mapper.toResponse(kfl);
 
     }
 
     //read
 
-    public KlijentFizickoLice findById(Integer id) {
-        return repository.findById(id).orElseThrow();
+    public KFLResponseDto findById(Integer id) {
+        return mapper.toResponse(repository.findById(id).orElseThrow());
     }
 
-    public List<KlijentFizickoLice> findByIme(String ime){
-        return repository.findByIme(ime);
+    public KFLResponseDto findByMaticniBr(String jmbg){
+        return mapper.toResponse(repository.findByMaticniBr(jmbg));
     }
 
-    public KlijentFizickoLice findByMaticniBr(String jmbg){
-        return repository.findByMaticniBr(jmbg);
+    public List<KFLResponseDto> findByIme(String ime){
+        return repository.findByIme(ime).stream().map(mapper::toResponse).toList();
     }
 
-    public List<KlijentFizickoLice> findByPrezime(String prezime){
-        return repository.findByPrezime(prezime);
+
+
+    public List<KFLResponseDto> findByPrezime(String prezime){
+        return repository.findByPrezime(prezime).stream().map(mapper::toResponse).toList();
     }
 
     //update
 
-    public KlijentFizickoLice update(Integer id, KlijentFizickoLice klijentFizickoLice) {
-        repository.findById ( id).orElseThrow();
-        klijentFizickoLice.setId(id);
-        return repository.save(klijentFizickoLice);
+    public KFLResponseDto update(Integer id, KFLRequestDto kflRequestDto) {
+        KlijentFizickoLice postojeci = repository.findById ( id).orElseThrow();
+        mapper.updateEntity(postojeci,kflRequestDto);
+        if(kflRequestDto.getStatusId()!=null){
+            postojeci.setStatus(statusFizickogLicaRepository.findById(kflRequestDto.getStatusId()).orElseThrow());
+        }
+        if (kflRequestDto.getPravnoLiceId()!=null){
+            postojeci.setPravnoLice(klijentPravnoLiceRepository.findById(kflRequestDto.getPravnoLiceId()).orElseThrow());
+        }
+        repository.save(postojeci);
+        return mapper.toResponse(postojeci);
     }
 
     //delete
