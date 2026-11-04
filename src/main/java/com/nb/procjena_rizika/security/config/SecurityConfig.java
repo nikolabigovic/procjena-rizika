@@ -30,11 +30,13 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/pr/edit").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST).authenticated()
                         .requestMatchers(HttpMethod.GET).authenticated()
                         .requestMatchers(HttpMethod.DELETE).hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT).hasRole("ADMIN"))
+
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
