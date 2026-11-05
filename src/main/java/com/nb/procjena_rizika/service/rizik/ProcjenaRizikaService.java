@@ -1,19 +1,28 @@
 package com.nb.procjena_rizika.service.rizik;
 
 
+import com.nb.procjena_rizika.dto.request.IndikatorOcjenaRequestDto;
+import com.nb.procjena_rizika.dto.request.ProcjenaRizikaRequestDto;
+import com.nb.procjena_rizika.dto.response.IndikatorOcjenaResponseDto;
+import com.nb.procjena_rizika.dto.response.ProcjenaRizikaResponseDto;
+import com.nb.procjena_rizika.mapper.IndikatorOcjenaMapper;
+import com.nb.procjena_rizika.mapper.ProcjenaRizikaMapper;
 import com.nb.procjena_rizika.model.klijent.KlijentPravnoLice;
 import com.nb.procjena_rizika.model.korisnik.Korisnik;
 import com.nb.procjena_rizika.model.rizik.IndikatorOcjena;
+import com.nb.procjena_rizika.model.rizik.IndikatorRizika;
 import com.nb.procjena_rizika.model.rizik.NivoRizika;
 import com.nb.procjena_rizika.model.rizik.ProcjenaRizika;
 import com.nb.procjena_rizika.repository.klijent.KlijentPravnoLiceRepository;
 import com.nb.procjena_rizika.repository.rizik.IndikatorOcjenaRepository;
+import com.nb.procjena_rizika.repository.rizik.IndikatorRizikaRepository;
 import com.nb.procjena_rizika.repository.rizik.NivoRizikaRepository;
 import com.nb.procjena_rizika.repository.rizik.ProcjenaRizikaRepository;
 import com.nb.procjena_rizika.service.logika.IzracunavanjePretnjeService;
 import com.nb.procjena_rizika.service.logika.IzracunavanjeRizikaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,21 +31,36 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProcjenaRizikaService {
 
-    private final ProcjenaRizikaRepository repository;
-    private final IndikatorOcjenaRepository indikatorOcjenaRepository;
-    private final IndikatorOcjenaService indikatorOcjenaService;
+    private final ProcjenaRizikaRepository procjenaRizikaRepository;
     private final IzracunavanjePretnjeService izracunavanjePretnjeService;
     private  final IzracunavanjeRizikaService izracunavanjeRizikaService;
     private final KlijentPravnoLiceRepository klijentPravnoLiceRepository;
-    private final NivoRizikaRepository nivoRizikaRepository;
-    //create
+    private final ProcjenaRizikaMapper procjenaRizikaMapper;
+    private final IndikatorOcjenaMapper indikatorOcjenaMapper;
+    private final IndikatorRizikaRepository indikatorRizikaRepository;
 
-    public ProcjenaRizika create(ProcjenaRizika procjenaRizika) {
+    //create
+    @Transactional//da osiguram da ce cijela biti unesena uvijek
+    public ProcjenaRizikaResponseDto create(ProcjenaRizikaRequestDto procjenaRizikaRequestDto) {
+
+        KlijentPravnoLice klijent = klijentPravnoLiceRepository.findById(procjenaRizikaRequestDto.getKlijentPravnoLiceId()).orElseThrow();
+
+        ProcjenaRizika procjenaRizika = new ProcjenaRizika();
+        procjenaRizika.setKlijentPravnoLice(klijent);
+        procjenaRizika.setObrazlozenje(procjenaRizikaRequestDto.getObrazlozenje());
+
+
+        for (IndikatorOcjenaRequestDto indikatorOcjenaRequestDto : procjenaRizikaRequestDto.getListaOcjena()){
+            IndikatorOcjena ocjena = indikatorOcjenaMapper.toEntity(indikatorOcjenaRequestDto);
+            IndikatorRizika indikatorRizika = indikatorRizikaRepository.findById(indikatorOcjenaRequestDto.getIndikatorRizikaId()).orElseThrow(); //ovo mi je trebalo masu da ukapiram
+            ocjena.setIndikatorRizika(indikatorRizika);
+            ocjena.setProcjenaRizika(procjenaRizika);
+            procjenaRizika.getOcjene().add(ocjena);
+
+        }
+
         List<IndikatorOcjena> listaOcjena=procjenaRizika.getOcjene();
 
-
-
-        KlijentPravnoLice klijent= klijentPravnoLiceRepository.findById(procjenaRizika.getKlijentPravnoLice().getId()).orElseThrow();
 
         var sifra= klijent.getSifraDjelatnosti();
         var pib = klijent.getPib();
@@ -45,63 +69,61 @@ public class ProcjenaRizikaService {
 
         Double ukupniRizik=izracunavanjeRizikaService.izracunavanjeUkupnogRizika(listaOcjena,sifra,pib);
 
-        procjenaRizika.setOcjene(listaOcjena);
 
         procjenaRizika.setPosljedica(izracunavanjeRizikaService.getPosljedice(pib));
         procjenaRizika.setRanjivost(izracunavanjeRizikaService.getRanjivost(sifra));
         procjenaRizika.setPrijetnja(izracunavanjePretnjeService.pretnja(listaOcjena));
 
         procjenaRizika.setUkupniRizik(ukupniRizik);
-        procjenaRizika.setNivoRizika(izracunavanjeRizikaService.klasifikacijaRizika(ukupniRizik));
+
+        NivoRizika nivoRizika=izracunavanjeRizikaService.klasifikacijaRizika(ukupniRizik);
+
+        procjenaRizika.setNivoRizika(nivoRizika);
         procjenaRizika.setDatumProcjene(LocalDateTime.now());
-        procjenaRizika.setDatumNaredneProcjene(izracunavanjeRizikaService.izracunavanjeDatumaNaredneProcjene(izracunavanjeRizikaService.klasifikacijaRizika(ukupniRizik)));
+        procjenaRizika.setDatumNaredneProcjene(izracunavanjeRizikaService.izracunavanjeDatumaNaredneProcjene(nivoRizika));
 
-
-
-
-
-
-        return repository.save(procjenaRizika);
+        ProcjenaRizika sacuvana = procjenaRizikaRepository.save(procjenaRizika);
+        return procjenaRizikaMapper.toResponse(sacuvana);
     }
 
     //read
-    public ProcjenaRizika findById(int id) {
-        return repository.findById(id).orElseThrow();
+    public ProcjenaRizikaResponseDto findById(int id) {
+        return procjenaRizikaMapper.toResponse(procjenaRizikaRepository.findById(id).orElseThrow());
     }
 
-    public List<ProcjenaRizika> findByKorisnik(Integer korisnik) {
-        return repository.findByKorisnikKreatorId(korisnik);
+    public List<ProcjenaRizikaResponseDto> findByKorisnik(Integer korisnik) {
+        return procjenaRizikaRepository.findByKorisnikKreatorId(korisnik).stream().map(procjenaRizikaMapper::toResponse).toList();
     }
 
-    public List<ProcjenaRizika> findByKlijent(Integer klijent) {
-        return repository.findByKlijentPravnoLiceId(klijent);
+    public List<ProcjenaRizikaResponseDto> findByKlijent(Integer klijent) {
+        return procjenaRizikaRepository.findByKlijentPravnoLiceId(klijent).stream().map(procjenaRizikaMapper::toResponse).toList();
     }
 
-    public List<ProcjenaRizika> findByNivoRizikaId(Integer nivoRizikaId) {
-        return repository.findByNivoRizikaId(nivoRizikaId);
+    public List<ProcjenaRizikaResponseDto> findByNivoRizikaId(Integer nivoRizikaId) {
+        return procjenaRizikaRepository.findByNivoRizikaId(nivoRizikaId).stream().map(procjenaRizikaMapper::toResponse).toList();
     }
 
     //update dostupan samo u prvih 7 dana od pravljenja procjene zbog eventualnih user errora.
 
     public ProcjenaRizika update(Integer id, ProcjenaRizika procjenaRizika) {
-        repository.findById(id).orElseThrow();
+        procjenaRizikaRepository.findById(id).orElseThrow();
 
         if (LocalDateTime.now().isAfter(procjenaRizika.getDatumProcjene().plusDays(7))) {
             throw new RuntimeException("Ne mozete mjenjati procjenu 7 dana nakon sto je  napravljena!");
         }
         else  {
             procjenaRizika.setId(id);
-            return repository.save(procjenaRizika);
+            return procjenaRizikaRepository.save(procjenaRizika);
         }
     }
 
     public void delete(Integer id) {
-        ProcjenaRizika procjenaRizika = findById(id);
+        ProcjenaRizika procjenaRizika = procjenaRizikaRepository.findById(id).orElseThrow();
         if (LocalDateTime.now().isAfter(procjenaRizika.getDatumProcjene().plusDays(7))) {
             throw new RuntimeException("Ne mozete izbrisati procjenu 7 dana nakon sto je  napravljena!");
         }
         else{
-            repository.delete(procjenaRizika);
+            procjenaRizikaRepository.delete(procjenaRizika);
         }
     }
 

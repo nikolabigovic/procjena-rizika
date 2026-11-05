@@ -1,12 +1,15 @@
 package com.nb.procjena_rizika.controller.rizik;
 
 
+import com.nb.procjena_rizika.dto.request.ProcjenaRizikaRequestDto;
+import com.nb.procjena_rizika.dto.response.ProcjenaRizikaResponseDto;
 import com.nb.procjena_rizika.model.klijent.KlijentPravnoLice;
 import com.nb.procjena_rizika.model.korisnik.Firma;
 import com.nb.procjena_rizika.model.korisnik.Korisnik;
 import com.nb.procjena_rizika.model.rizik.ProcjenaRizika;
 import com.nb.procjena_rizika.service.korisnik.FirmaService;
 import com.nb.procjena_rizika.service.rizik.ProcjenaRizikaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +26,8 @@ public class ProcjenaRizikaController {
 
 
     @PostMapping
-    public ResponseEntity<ProcjenaRizika> save(@RequestBody ProcjenaRizika procjenaRizika){
-        return new ResponseEntity<>(procjenaRizikaService.create(procjenaRizika), HttpStatus.CREATED);
+    public ResponseEntity<ProcjenaRizikaResponseDto> save(@Valid @RequestBody ProcjenaRizikaRequestDto procjenaRizikaRequestDto){
+        return new ResponseEntity<>(procjenaRizikaService.create(procjenaRizikaRequestDto), HttpStatus.CREATED);
     }
 
 
@@ -32,22 +35,22 @@ public class ProcjenaRizikaController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProcjenaRizika> findById(@PathVariable Integer id){
+    public ResponseEntity<ProcjenaRizikaResponseDto> findById(@PathVariable Integer id){
         return ResponseEntity.ok(procjenaRizikaService.findById(id));
     }
 
     @GetMapping("/kor/{korisnikId}")
-    public ResponseEntity <List<ProcjenaRizika>> findByKor(@PathVariable Integer korisnikId){
+    public ResponseEntity <List<ProcjenaRizikaResponseDto>> findByKor(@PathVariable Integer korisnikId){
         return ResponseEntity.ok(procjenaRizikaService.findByKorisnik(korisnikId));
     }
 
     @GetMapping("/kl/{klijent}")
-    public ResponseEntity<List<ProcjenaRizika>>  findByKlijent(@PathVariable Integer klijent){
+    public ResponseEntity<List<ProcjenaRizikaResponseDto>>  findByKlijent(@PathVariable Integer klijent){
         return ResponseEntity.ok(procjenaRizikaService.findByKlijent(klijent));
     }
 
     @GetMapping("/nivo/{nivo}")
-    public ResponseEntity<List<ProcjenaRizika>> findByNivo(@PathVariable Integer nivo){
+    public ResponseEntity<List<ProcjenaRizikaResponseDto>> findByNivo(@PathVariable Integer nivo){
         return ResponseEntity.ok(procjenaRizikaService.findByNivoRizikaId(nivo));
     }
 

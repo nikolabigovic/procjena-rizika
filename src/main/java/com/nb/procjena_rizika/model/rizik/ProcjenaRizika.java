@@ -64,7 +64,9 @@ public class ProcjenaRizika {
     private String obrazlozenje;
 
     // ovo mi je za mapiranje na create metodu za procjenu rizika. sluzi kao "virtuelna" kolona u tabeli koja ne postoji
-    @OneToMany(mappedBy = "procjenaRizika")
+    @OneToMany(mappedBy = "procjenaRizika"
+    ,cascade = CascadeType.ALL, orphanRemoval = true)
     private List<IndikatorOcjena> ocjene= new ArrayList<>();
+
 
 }
