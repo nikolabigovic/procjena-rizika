@@ -1,0 +1,33 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #e8eaf6;
+}
+.wrap {
+  display: flex;
+  justify-content: center;
+  padding: 96px 24px;
+  box-sizing: border-box;
+}
+.login {
+  width: 100%;
+  max-width: 400px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  padding: 40px 32px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.naslov {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.naslov h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 500;
+}
