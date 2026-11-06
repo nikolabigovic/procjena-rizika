@@ -1,12 +1,16 @@
 package com.nb.procjena_rizika.security.controller;
 
+import com.nb.procjena_rizika.dto.request.ProcjenaRizikaRequestDto;
+import com.nb.procjena_rizika.dto.response.ProcjenaRizikaResponseDto;
 import com.nb.procjena_rizika.security.dto.JwtDto;
 import com.nb.procjena_rizika.security.dto.LoginDto;
 import com.nb.procjena_rizika.security.service.AuthService;
 import com.nb.procjena_rizika.security.service.UserDetailsServiceImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("api/auth")
@@ -26,5 +30,10 @@ public class AuthController {
     public ResponseEntity<JwtDto> loginJwt(@RequestBody LoginDto loginDto, @RequestParam("rememberMe")Boolean rememberMe ) {
         JwtDto response = authService.loginJwt(loginDto, rememberMe);
         return ResponseEntity.ok(response);
+
+
     }
+
+
+
 }

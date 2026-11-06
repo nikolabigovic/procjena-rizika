@@ -14,6 +14,7 @@ import com.nb.procjena_rizika.model.rizik.IndikatorRizika;
 import com.nb.procjena_rizika.model.rizik.NivoRizika;
 import com.nb.procjena_rizika.model.rizik.ProcjenaRizika;
 import com.nb.procjena_rizika.repository.klijent.KlijentPravnoLiceRepository;
+import com.nb.procjena_rizika.repository.korisnik.KorisnikRepository;
 import com.nb.procjena_rizika.repository.rizik.IndikatorOcjenaRepository;
 import com.nb.procjena_rizika.repository.rizik.IndikatorRizikaRepository;
 import com.nb.procjena_rizika.repository.rizik.NivoRizikaRepository;
@@ -38,11 +39,12 @@ public class ProcjenaRizikaService {
     private final ProcjenaRizikaMapper procjenaRizikaMapper;
     private final IndikatorOcjenaMapper indikatorOcjenaMapper;
     private final IndikatorRizikaRepository indikatorRizikaRepository;
+    private final KorisnikRepository korisnikRepository;
 
     //create
     @Transactional//da osiguram da ce cijela biti unesena uvijek
-    public ProcjenaRizikaResponseDto create(ProcjenaRizikaRequestDto procjenaRizikaRequestDto) {
-
+    public ProcjenaRizikaResponseDto create(ProcjenaRizikaRequestDto procjenaRizikaRequestDto, String username) {  //username se iz tokena vadi i prosljedjuje
+        Korisnik korisnik = korisnikRepository.findOptionalByUsername(username).orElseThrow();
         KlijentPravnoLice klijent = klijentPravnoLiceRepository.findById(procjenaRizikaRequestDto.getKlijentPravnoLiceId()).orElseThrow();
 
         ProcjenaRizika procjenaRizika = new ProcjenaRizika();
@@ -81,6 +83,8 @@ public class ProcjenaRizikaService {
         procjenaRizika.setNivoRizika(nivoRizika);
         procjenaRizika.setDatumProcjene(LocalDateTime.now());
         procjenaRizika.setDatumNaredneProcjene(izracunavanjeRizikaService.izracunavanjeDatumaNaredneProcjene(nivoRizika));
+
+        procjenaRizika.setKorisnikKreator(korisnik);
 
         ProcjenaRizika sacuvana = procjenaRizikaRepository.save(procjenaRizika);
         return procjenaRizikaMapper.toResponse(sacuvana);

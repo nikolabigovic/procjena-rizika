@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,8 +27,9 @@ public class ProcjenaRizikaController {
 
 
     @PostMapping
-    public ResponseEntity<ProcjenaRizikaResponseDto> save(@Valid @RequestBody ProcjenaRizikaRequestDto procjenaRizikaRequestDto){
-        return new ResponseEntity<>(procjenaRizikaService.create(procjenaRizikaRequestDto), HttpStatus.CREATED);
+    public ResponseEntity<ProcjenaRizikaResponseDto> save(@Valid @RequestBody ProcjenaRizikaRequestDto procjenaRizikaRequestDto, Authentication authentication) {
+
+        return new ResponseEntity<>(procjenaRizikaService.create(procjenaRizikaRequestDto, authentication.getName()), HttpStatus.CREATED);
     }
 
 
