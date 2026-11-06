@@ -84,4 +84,14 @@ public class GlobalExceptionHandler {
         );
         return  new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(IzmjenaNijeDozvoljenaException.class)
+    public ResponseEntity<ErrorResponse> handleIzmjenaNijeDozvoljena(IzmjenaNijeDozvoljenaException exception, HttpServletRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                exception.getMessage(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
 }

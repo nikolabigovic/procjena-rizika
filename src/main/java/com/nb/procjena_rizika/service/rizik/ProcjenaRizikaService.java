@@ -5,6 +5,7 @@ import com.nb.procjena_rizika.dto.request.IndikatorOcjenaRequestDto;
 import com.nb.procjena_rizika.dto.request.ProcjenaRizikaRequestDto;
 import com.nb.procjena_rizika.dto.response.IndikatorOcjenaResponseDto;
 import com.nb.procjena_rizika.dto.response.ProcjenaRizikaResponseDto;
+import com.nb.procjena_rizika.exception.IzmjenaNijeDozvoljenaException;
 import com.nb.procjena_rizika.mapper.IndikatorOcjenaMapper;
 import com.nb.procjena_rizika.mapper.ProcjenaRizikaMapper;
 import com.nb.procjena_rizika.model.klijent.KlijentPravnoLice;
@@ -109,26 +110,68 @@ public class ProcjenaRizikaService {
 
     //update dostupan samo u prvih 7 dana od pravljenja procjene zbog eventualnih user errora.
 
-    public ProcjenaRizika update(Integer id, ProcjenaRizika procjenaRizika) {
-        procjenaRizikaRepository.findById(id).orElseThrow();
+    private void updateOcjena(ProcjenaRizika procjenaRizika, ProcjenaRizikaRequestDto procjenaRizikaRequestDto){//identicno kao create metoda samo bez mjenjanja datuma procjene
 
-        if (LocalDateTime.now().isAfter(procjenaRizika.getDatumProcjene().plusDays(7))) {
-            throw new RuntimeException("Ne mozete mjenjati procjenu 7 dana nakon sto je  napravljena!");
+        for (IndikatorOcjenaRequestDto indikatorOcjenaRequestDto : procjenaRizikaRequestDto.getListaOcjena()) {
+            IndikatorOcjena ocjena = indikatorOcjenaMapper.toEntity(indikatorOcjenaRequestDto);
+            IndikatorRizika indikatorRizika = indikatorRizikaRepository.findById(indikatorOcjenaRequestDto.getIndikatorRizikaId()).orElseThrow(); //ovo mi je trebalo masu da ukapiram
+            ocjena.setIndikatorRizika(indikatorRizika);
+            ocjena.setProcjenaRizika(procjenaRizika);
+            procjenaRizika.getOcjene().add(ocjena);
         }
-        else  {
-            procjenaRizika.setId(id);
-            return procjenaRizikaRepository.save(procjenaRizika);
+            List<IndikatorOcjena> listaOcjena=procjenaRizika.getOcjene();
+
+            KlijentPravnoLice klijent=procjenaRizika.getKlijentPravnoLice();
+            var sifra= klijent.getSifraDjelatnosti();
+            var pib = klijent.getPib();
+
+
+
+            Double ukupniRizik=izracunavanjeRizikaService.izracunavanjeUkupnogRizika(listaOcjena,sifra,pib);
+
+
+            procjenaRizika.setPosljedica(izracunavanjeRizikaService.getPosljedice(pib));
+            procjenaRizika.setRanjivost(izracunavanjeRizikaService.getRanjivost(sifra));
+            procjenaRizika.setPrijetnja(izracunavanjePretnjeService.pretnja(listaOcjena));
+
+            procjenaRizika.setUkupniRizik(ukupniRizik);
+
+            NivoRizika nivoRizika=izracunavanjeRizikaService.klasifikacijaRizika(ukupniRizik);
+
+            procjenaRizika.setNivoRizika(nivoRizika);
+            procjenaRizika.setDatumNaredneProcjene(izracunavanjeRizikaService.izracunavanjeDatumaNaredneProcjene(nivoRizika));
+
+
+
+    }
+
+    @Transactional
+    public ProcjenaRizikaResponseDto update(Integer id, ProcjenaRizikaRequestDto procjenaRizikaRequestDto, String username) {
+        ProcjenaRizika postojeca= procjenaRizikaRepository.findById(id).orElseThrow();
+
+        if (LocalDateTime.now().isAfter(postojeca.getDatumProcjene().plusDays(7))) {
+            throw new IzmjenaNijeDozvoljenaException("Ne mozete mjenjati procjenu 7 dana nakon sto je  napravljena!");
         }
+        postojeca.setObrazlozenje(procjenaRizikaRequestDto.getObrazlozenje());
+
+        postojeca.getOcjene().clear();
+
+        updateOcjena(postojeca, procjenaRizikaRequestDto);
+
+        ProcjenaRizika sacuvana = procjenaRizikaRepository.save(postojeca);
+
+        return procjenaRizikaMapper.toResponse(sacuvana);
+
     }
 
     public void delete(Integer id) {
         ProcjenaRizika procjenaRizika = procjenaRizikaRepository.findById(id).orElseThrow();
         if (LocalDateTime.now().isAfter(procjenaRizika.getDatumProcjene().plusDays(7))) {
-            throw new RuntimeException("Ne mozete izbrisati procjenu 7 dana nakon sto je  napravljena!");
+            throw new IzmjenaNijeDozvoljenaException("Ne mozete izbrisati procjenu 7 dana nakon sto je  napravljena!");
         }
-        else{
+
             procjenaRizikaRepository.delete(procjenaRizika);
-        }
+
     }
 
 

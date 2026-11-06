@@ -58,8 +58,8 @@ public class ProcjenaRizikaController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProcjenaRizika> update(@PathVariable Integer id, @RequestBody ProcjenaRizika procjena){
-        return ResponseEntity.ok(procjenaRizikaService.update(id, procjena));
+    public ResponseEntity<ProcjenaRizikaResponseDto> update(@PathVariable Integer id,@Valid  @RequestBody ProcjenaRizikaRequestDto procjena, Authentication authentication) {
+        return ResponseEntity.ok(procjenaRizikaService.update(id, procjena, authentication.getName()));
     }
 
     @DeleteMapping("/{id}")
