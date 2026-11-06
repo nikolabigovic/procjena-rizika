@@ -1,0 +1,31 @@
+<p class="note">Ova stranica je vidljiva samo korisnicima s ulogom ADMIN.</p>
+
+<section class="card p">
+  <h2>Podaci o firmi (obveznik)</h2>
+  <div class="grid2">
+    <label class="field">Naziv firme<input type="text" value="Primjer Konsalting d.o.o."></label>
+    <label class="field">PIB<input type="text" value="02111222"></label>
+    <label class="field">Šifra djelatnosti<input type="text" value="70.22"></label>
+    <label class="field">Posljedice (1–5)<input type="text" value="4"></label>
+  </div>
+  <div><button class="btn" type="button">Sačuvaj</button></div>
+</section>
+
+<section class="card">
+  <div class="hd" style="padding: 16px 16px 8px">
+    <h2>Korisnici</h2>
+    <button class="btn" type="button">
+      <svg class="ic sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      Novi korisnik
+    </button>
+  </div>
+  <div class="scroll">
+    <table class="tbl">
+      <thead><tr><th>Ime i prezime</th><th>Korisničko ime</th><th>E-mail</th><th>Uloga</th><th></th></tr></thead>
+      <tbody>
+        <tr><td>Nikola Bigović</td><td>nikola</td><td>nikola&#64;primjer.me</td><td><span class="chip a">ADMIN</span></td><td><button class="act" type="button">Uredi</button><button class="act d" type="button">Obriši</button></td></tr>
+        <tr><td>Marija Jovanović</td><td>marija</td><td>marija&#64;primjer.me</td><td><span class="chip">KORISNIK</span></td><td><button class="act" type="button">Uredi</button><button class="act d" type="button">Obriši</button></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
