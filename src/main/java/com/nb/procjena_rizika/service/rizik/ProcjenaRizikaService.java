@@ -101,7 +101,7 @@ public class ProcjenaRizikaService {
             var sifra= klijent.getSifraDjelatnosti();
             var pib= procjenaRizika.getKorisnikKreator().getFirma().getPib();
 
-            Double prijetnja=izracunavanjePretnjeService.pretnja(listaOcjena);
+            Double prijetnja=izracunavanjePretnjeService.pretnja(listaOcjena,sifra);
             Double ranjivost=izracunavanjeRizikaService.getRanjivost(sifra);
             Double posljedica=izracunavanjeRizikaService.getPosljedice(pib);
 

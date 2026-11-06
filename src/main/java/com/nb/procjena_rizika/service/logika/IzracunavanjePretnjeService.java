@@ -3,8 +3,10 @@ package com.nb.procjena_rizika.service.logika;
 
 import com.nb.procjena_rizika.model.rizik.IndikatorOcjena;
 import com.nb.procjena_rizika.model.rizik.IndikatorRizika;
+import com.nb.procjena_rizika.model.rizik.TezinaGrupeRizika;
 import com.nb.procjena_rizika.repository.rizik.GrupaFaktoraRizikaRepository;
 import com.nb.procjena_rizika.repository.rizik.IndikatorRizikaRepository;
+import com.nb.procjena_rizika.repository.rizik.TezinaGrupeRizikaRepository;
 import com.nb.procjena_rizika.service.rizik.IndikatorOcjenaService;
 import com.nb.procjena_rizika.service.rizik.ProcjenaRizikaService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class IzracunavanjePretnjeService {
     private final GrupaFaktoraRizikaRepository  grupaFaktoraRizikaRepository;
     private final IndikatorOcjenaService  indikatorOcjenaService;
     private final IndikatorRizikaRepository  indikatorRizikaRepository;
+    private final TezinaGrupeRizikaRepository   tezinaGrupeRizikaRepository;
 
 
 
@@ -63,17 +66,14 @@ public class IzracunavanjePretnjeService {
 
     // izracunava pretnju ponderisanu
 
-    public Double izracunajPretnju(Map<Integer, Double> mapa){
+    public Double izracunajPretnju(Map<Integer, Double> mapa, String sifraDjelatnosti) {
 
-        //ponderi hardcoded za sad:D
-
+        var tezine = tezinaGrupeRizikaRepository.findBySifraDjelatnosti(sifraDjelatnosti);
         Map<Integer, Double> ponderi= new HashMap<>();
 
-        ponderi.put(1, 0.25);
-        ponderi.put(2, 0.20);
-        ponderi.put(3, 0.10);
-        ponderi.put(4, 0.30);
-        ponderi.put(5, 0.15);
+        for(TezinaGrupeRizika t : tezine){
+            ponderi.put(t.getGrupaFaktoraRizika().getId(), t.getTezina());
+        }
 
 
         List<Double> lista = new ArrayList<>();
@@ -83,6 +83,10 @@ public class IzracunavanjePretnjeService {
         for(Map.Entry<Integer, Double> entry : mapa.entrySet()){
             Integer key = entry.getKey();
             Double value = entry.getValue();
+            Double ponder = ponderi.get(key);
+            if(ponder==null){
+                throw new IllegalStateException("nije definisan ponder za grupu "+key+" i sifru djelatnosti "+ sifraDjelatnosti); //vrlo cesto ce pucat ovdje jer to sve zavisi od popunjenosti baze
+            }
             value=value*ponderi.get(key);
             lista.add(value);
         }
@@ -96,10 +100,10 @@ public class IzracunavanjePretnjeService {
 
     // metoda koja poziva sve ove i vraca pretnju
 
-    public Double pretnja (List<IndikatorOcjena> lista){
+    public Double pretnja (List<IndikatorOcjena> lista, String sifraDjelatnosti) {
         Map<Integer, List<IndikatorOcjena>> mapa=grupisanjePoFaktorima(lista);
         Map<Integer,Double> mapa2 = ocjenaPoGrupama(mapa);
-        Double pretnja=izracunajPretnju(mapa2);
+        Double pretnja=izracunajPretnju(mapa2,sifraDjelatnosti);
         return pretnja;
 
 
