@@ -14,6 +14,7 @@ import com.nb.procjena_rizika.model.rizik.IndikatorOcjena;
 import com.nb.procjena_rizika.model.rizik.IndikatorRizika;
 import com.nb.procjena_rizika.model.rizik.NivoRizika;
 import com.nb.procjena_rizika.model.rizik.ProcjenaRizika;
+import com.nb.procjena_rizika.repository.klijent.KlijentFizickoLiceRepository;
 import com.nb.procjena_rizika.repository.klijent.KlijentPravnoLiceRepository;
 import com.nb.procjena_rizika.repository.korisnik.FirmaRepository;
 import com.nb.procjena_rizika.repository.korisnik.KorisnikRepository;
@@ -43,6 +44,8 @@ public class ProcjenaRizikaService {
     private final IndikatorRizikaRepository indikatorRizikaRepository;
     private final KorisnikRepository korisnikRepository;
     private final FirmaRepository firmaRepository;
+    private final KlijentFizickoLiceRepository klijentFizickoLiceRepository;
+    private final NivoRizikaRepository nivoRizikaRepository;
 
     //create
     @Transactional//da osiguram da ce cijela biti unesena uvijek
@@ -116,8 +119,13 @@ public class ProcjenaRizikaService {
             procjenaRizika.setUkupniRizik(ukupniRizik);
 
             NivoRizika nivoRizika=izracunavanjeRizikaService.klasifikacijaRizika(ukupniRizik);
-
+            procjenaRizika.setAutomatskiRizik(false);
+            if(klijentFizickoLiceRepository.existsByPravnoLiceIdAndIsPelTrue(klijent.getId())){
+                nivoRizika=nivoRizikaRepository.findById(5).orElseThrow();
+                procjenaRizika.setAutomatskiRizik(true);
+            }
             procjenaRizika.setNivoRizika(nivoRizika);
+
             procjenaRizika.setDatumNaredneProcjene(izracunavanjeRizikaService.izracunavanjeDatumaNaredneProcjene(nivoRizika));
 
 
