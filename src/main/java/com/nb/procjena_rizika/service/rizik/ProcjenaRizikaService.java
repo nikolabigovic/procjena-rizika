@@ -15,6 +15,7 @@ import com.nb.procjena_rizika.model.rizik.IndikatorRizika;
 import com.nb.procjena_rizika.model.rizik.NivoRizika;
 import com.nb.procjena_rizika.model.rizik.ProcjenaRizika;
 import com.nb.procjena_rizika.repository.klijent.KlijentPravnoLiceRepository;
+import com.nb.procjena_rizika.repository.korisnik.FirmaRepository;
 import com.nb.procjena_rizika.repository.korisnik.KorisnikRepository;
 import com.nb.procjena_rizika.repository.rizik.IndikatorOcjenaRepository;
 import com.nb.procjena_rizika.repository.rizik.IndikatorRizikaRepository;
@@ -41,6 +42,7 @@ public class ProcjenaRizikaService {
     private final IndikatorOcjenaMapper indikatorOcjenaMapper;
     private final IndikatorRizikaRepository indikatorRizikaRepository;
     private final KorisnikRepository korisnikRepository;
+    private final FirmaRepository firmaRepository;
 
     //create
     @Transactional//da osiguram da ce cijela biti unesena uvijek
@@ -51,41 +53,11 @@ public class ProcjenaRizikaService {
         ProcjenaRizika procjenaRizika = new ProcjenaRizika();
         procjenaRizika.setKlijentPravnoLice(klijent);
         procjenaRizika.setObrazlozenje(procjenaRizikaRequestDto.getObrazlozenje());
-
-
-        for (IndikatorOcjenaRequestDto indikatorOcjenaRequestDto : procjenaRizikaRequestDto.getListaOcjena()){
-            IndikatorOcjena ocjena = indikatorOcjenaMapper.toEntity(indikatorOcjenaRequestDto);
-            IndikatorRizika indikatorRizika = indikatorRizikaRepository.findById(indikatorOcjenaRequestDto.getIndikatorRizikaId()).orElseThrow(); //ovo mi je trebalo masu da ukapiram
-            ocjena.setIndikatorRizika(indikatorRizika);
-            ocjena.setProcjenaRizika(procjenaRizika);
-            procjenaRizika.getOcjene().add(ocjena);
-
-        }
-
-        List<IndikatorOcjena> listaOcjena=procjenaRizika.getOcjene();
-
-
-        var sifra= klijent.getSifraDjelatnosti();
-        var pib = klijent.getPib();
-
-
-
-        Double ukupniRizik=izracunavanjeRizikaService.izracunavanjeUkupnogRizika(listaOcjena,sifra,pib);
-
-
-        procjenaRizika.setPosljedica(izracunavanjeRizikaService.getPosljedice(pib));
-        procjenaRizika.setRanjivost(izracunavanjeRizikaService.getRanjivost(sifra));
-        procjenaRizika.setPrijetnja(izracunavanjePretnjeService.pretnja(listaOcjena));
-
-        procjenaRizika.setUkupniRizik(ukupniRizik);
-
-        NivoRizika nivoRizika=izracunavanjeRizikaService.klasifikacijaRizika(ukupniRizik);
-
-        procjenaRizika.setNivoRizika(nivoRizika);
-        procjenaRizika.setDatumProcjene(LocalDateTime.now());
-        procjenaRizika.setDatumNaredneProcjene(izracunavanjeRizikaService.izracunavanjeDatumaNaredneProcjene(nivoRizika));
-
         procjenaRizika.setKorisnikKreator(korisnik);
+        procjenaRizika.setDatumProcjene(LocalDateTime.now());
+        izracunavanjeOcjena(procjenaRizika, procjenaRizikaRequestDto);
+
+
 
         ProcjenaRizika sacuvana = procjenaRizikaRepository.save(procjenaRizika);
         return procjenaRizikaMapper.toResponse(sacuvana);
@@ -108,9 +80,13 @@ public class ProcjenaRizikaService {
         return procjenaRizikaRepository.findByNivoRizikaId(nivoRizikaId).stream().map(procjenaRizikaMapper::toResponse).toList();
     }
 
+
+
+
+
     //update dostupan samo u prvih 7 dana od pravljenja procjene zbog eventualnih user errora.
 
-    private void updateOcjena(ProcjenaRizika procjenaRizika, ProcjenaRizikaRequestDto procjenaRizikaRequestDto){//identicno kao create metoda samo bez mjenjanja datuma procjene
+    private void izracunavanjeOcjena(ProcjenaRizika procjenaRizika, ProcjenaRizikaRequestDto procjenaRizikaRequestDto){//identicno kao create metoda samo bez mjenjanja datuma procjene
 
         for (IndikatorOcjenaRequestDto indikatorOcjenaRequestDto : procjenaRizikaRequestDto.getListaOcjena()) {
             IndikatorOcjena ocjena = indikatorOcjenaMapper.toEntity(indikatorOcjenaRequestDto);
@@ -123,16 +99,19 @@ public class ProcjenaRizikaService {
 
             KlijentPravnoLice klijent=procjenaRizika.getKlijentPravnoLice();
             var sifra= klijent.getSifraDjelatnosti();
-            var pib = klijent.getPib();
+            var pib= procjenaRizika.getKorisnikKreator().getFirma().getPib();
+
+            Double prijetnja=izracunavanjePretnjeService.pretnja(listaOcjena);
+            Double ranjivost=izracunavanjeRizikaService.getRanjivost(sifra);
+            Double posljedica=izracunavanjeRizikaService.getPosljedice(pib);
 
 
+            Double ukupniRizik=izracunavanjeRizikaService.izracunavanjeUkupnogRizika(prijetnja,ranjivost,posljedica); //promjenjena logika izracunavanja ukunogrizika zbog dupliranja racunanja bez potrebe, stara verzija se moze vidjeti u starim commitovima
 
-            Double ukupniRizik=izracunavanjeRizikaService.izracunavanjeUkupnogRizika(listaOcjena,sifra,pib);
 
-
-            procjenaRizika.setPosljedica(izracunavanjeRizikaService.getPosljedice(pib));
-            procjenaRizika.setRanjivost(izracunavanjeRizikaService.getRanjivost(sifra));
-            procjenaRizika.setPrijetnja(izracunavanjePretnjeService.pretnja(listaOcjena));
+            procjenaRizika.setPosljedica(posljedica);
+            procjenaRizika.setRanjivost(ranjivost);
+            procjenaRizika.setPrijetnja(prijetnja);
 
             procjenaRizika.setUkupniRizik(ukupniRizik);
 
@@ -156,7 +135,7 @@ public class ProcjenaRizikaService {
 
         postojeca.getOcjene().clear();
 
-        updateOcjena(postojeca, procjenaRizikaRequestDto);
+        izracunavanjeOcjena(postojeca, procjenaRizikaRequestDto);
 
         ProcjenaRizika sacuvana = procjenaRizikaRepository.save(postojeca);
 

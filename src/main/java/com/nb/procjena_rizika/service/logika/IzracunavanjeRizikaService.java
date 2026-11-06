@@ -36,11 +36,7 @@ public class IzracunavanjeRizikaService {
     }
 
     //izracunavanje ukupnog rizika duhh
-    public Double izracunavanjeUkupnogRizika(List<IndikatorOcjena> lista, String sifraDjelatnosti, String firmaPib) {
-        Double pretnja = izracunavanjePretnjeService.pretnja(lista);
-        Double ranjivost = getRanjivost(sifraDjelatnosti);
-        Double posljedice = getPosljedice(firmaPib);
-
+    public Double izracunavanjeUkupnogRizika(Double pretnja, Double ranjivost, Double posljedice) {//pojednostavljena logika nego na prethodne commitove
         Double ukupanRizik = pretnja * ranjivost * posljedice;
         ukupanRizik = Math.round(ukupanRizik * 100.0) / 100.0;
         return ukupanRizik;
