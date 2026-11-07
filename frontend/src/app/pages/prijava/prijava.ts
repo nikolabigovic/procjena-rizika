@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-prijava',
@@ -7,4 +8,7 @@ import { RouterLink } from '@angular/router';
   templateUrl: './prijava.html',
   styleUrl: './prijava.css',
 })
-export class Prijava {}
+export class Prijava {
+  // constructor() {console.log(environment.apiUrl)  samo mali test da vidim radi li env
+  // }
+}
