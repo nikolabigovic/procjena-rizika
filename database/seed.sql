@@ -22,7 +22,7 @@ LOCK TABLES `status_fizickog_lica` WRITE;
 INSERT INTO `status_fizickog_lica` (`id`, `naziv`, `opis`) VALUES (1,'Stvarni vlasnik','Lice koje je stvarni vlasnik pravnog lica');
 INSERT INTO `status_fizickog_lica` (`id`, `naziv`, `opis`) VALUES (2,'Direktor','Lice koje je direktor pravnog lica');
 INSERT INTO `status_fizickog_lica` (`id`, `naziv`, `opis`) VALUES (3,'Osnivač','Lice koje je osnivač pravnog lica');
-INSERT INTO `status_fizickog_lica` (`id`, `naziv`, `opis`) VALUES (4,'Zaposleni','Lice zaposleno u pravnom licu');
+INSERT INTO `status_fizickog_lica` (`id`, `naziv`, `opis`) VALUES (4,'Ovlašćeno lice','Lice ovlasceno u pravnom licu');
 /*!40000 ALTER TABLE `status_fizickog_lica` ENABLE KEYS */;
 UNLOCK TABLES;
 
