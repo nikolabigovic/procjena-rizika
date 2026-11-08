@@ -5,7 +5,9 @@
     Novi klijent
   </a>
 </div>
-
+@if (greska()) {
+<p class="note">{{ greska() }}</p>
+}
 <div class="card">
   <div class="tools">
     <label class="search">
@@ -27,14 +29,20 @@
         <tr><th>Naziv</th><th>PIB</th><th>Šifra djelatnosti</th><th>Nivo rizika</th><th>Naredna procjena</th><th></th></tr>
       </thead>
       <tbody>
-        <tr><td>Adriatic Trade d.o.o.</td><td>02345678</td><td>46.19</td><td><span class="chip c2">Srednje niži rizik</span></td><td>31.10.2027.</td><td><a class="act" routerLink="/klijenti/novi">Uredi</a></td></tr>
-        <tr><td>Lovćen Invest a.d.</td><td>02456789</td><td>64.92</td><td><span class="chip c5">Visok rizik</span></td><td>30.11.2026.</td><td><a class="act" routerLink="/klijenti/novi">Uredi</a></td></tr>
-        <tr><td>Bokaška Gradnja d.o.o.</td><td>02567890</td><td>41.20</td><td><span class="chip c4">Srednje visok rizik</span></td><td>31.01.2027.</td><td><a class="act" routerLink="/klijenti/novi">Uredi</a></td></tr>
-        <tr><td>Morača Soft d.o.o.</td><td>02678901</td><td>62.01</td><td><span class="chip c1">Niži rizik</span></td><td>31.10.2027.</td><td><a class="act" routerLink="/klijenti/novi">Uredi</a></td></tr>
-        <tr><td>Zeta Nekretnine d.o.o.</td><td>02789012</td><td>68.31</td><td><span class="chip c3">Srednji rizik</span></td><td>30.04.2027.</td><td><a class="act" routerLink="/klijenti/novi">Uredi</a></td></tr>
-        <tr><td>Primorje Turs d.o.o.</td><td>02890123</td><td>79.11</td><td><span class="chip c3">Srednji rizik</span></td><td>30.04.2027.</td><td><a class="act" routerLink="/klijenti/novi">Uredi</a></td></tr>
+        @for (k of klijenti(); track k.id) {
+        <tr>
+          <td>{{ k.naziv }}</td>
+          <td>{{ k.pib }}</td>
+          <td>{{ k.sifraDjelatnosti }}</td>
+          <td>—</td>
+          <td>—</td>
+          <td><a class="act" routerLink="/klijenti/novi">Uredi</a></td>
+        </tr>
+        } @empty {
+        <tr><td colspan="6">Nema klijenata.</td></tr>
+        }
       </tbody>
     </table>
   </div>
-  <div class="pag"><span>Redova po stranici: 10</span><span>1–6 od 6</span></div>
+  <div class="pag"><span>Ukupno klijenata: {{klijenti().length}}</span></div>
 </div>
