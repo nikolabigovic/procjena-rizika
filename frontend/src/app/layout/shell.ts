@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
+import { AuthService } from '../core/auth/auth-service';
 
 @Component({
   selector: 'app-shell',
@@ -10,7 +11,13 @@ import { filter, map, startWith } from 'rxjs';
 })
 export class Shell {
   private readonly router = inject(Router);
+  private authService = inject(AuthService);
 
+  logOut(){
+    this.authService.logout();
+    this.router.navigate(['/prijava']);
+
+  }
   // Prikaz naslova iz `data.naslov` aktivne rute (samo za prikaz).
   protected readonly naslov = toSignal(
     this.router.events.pipe(

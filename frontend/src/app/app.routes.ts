@@ -7,6 +7,7 @@ import { NovaProcjena } from './pages/nova-procjena/nova-procjena';
 import { Istorija } from './pages/istorija/istorija';
 import { Izlozenost } from './pages/izlozenost/izlozenost';
 import { Admin } from './pages/admin/admin';
+import {authGuard} from './core/auth/auth-guard';
 
 // Rute služe samo da se može kliktati između ekrana dizajna.
 // `data.naslov` je tekst koji se prikazuje u plavoj gornjoj traci.
@@ -15,6 +16,7 @@ export const routes: Routes = [
   {
     path: '',
     component: Shell,
+    canActivate: [authGuard],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'klijenti' },
       { path: 'klijenti', component: Klijenti, data: { naslov: 'Klijenti' } },

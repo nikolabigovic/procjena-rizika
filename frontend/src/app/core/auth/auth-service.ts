@@ -21,7 +21,7 @@ export class AuthService {
     return localStorage.getItem(this.TOKEN_KEY);
   }
   isLoggedIn(): boolean {
-    return this.getToken() !== null;
+    return !!this.getToken(); //zato sto ako je token prazan string i dalje me pustao da pristupim, zato ce sada da baza false
   }
 
   logout(): void {
