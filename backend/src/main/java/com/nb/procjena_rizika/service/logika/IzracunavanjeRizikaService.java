@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -68,6 +69,16 @@ public class IzracunavanjeRizikaService {
         else if (id==4) return LocalDate.now().plusMonths(3);
         else if (id==5) return LocalDate.now().plusMonths(1);
         else return LocalDate.now().plusDays(30);
+    }
+
+    public Boolean daLiJeSifraRizicna(String sifraDjelatnosti){
+        List<String> listaRizicnihSifri=new ArrayList<>();
+        listaRizicnihSifri.add("92");//nemam i dalje tacne sifre djelatnosti za koje je ovo uslov pa kao placeholder ostaje ovkao!
+        listaRizicnihSifri.add("93.11");
+        if (listaRizicnihSifri.contains(sifraDjelatnosti)) {
+            return true;
+        }
+        else return false;
     }
 }
 

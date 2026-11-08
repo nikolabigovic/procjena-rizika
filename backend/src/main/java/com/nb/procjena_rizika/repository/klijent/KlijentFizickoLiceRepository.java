@@ -14,8 +14,9 @@ public interface KlijentFizickoLiceRepository extends JpaRepository<KlijentFizic
     List<KlijentFizickoLice> findByIme(String ime);
     List<KlijentFizickoLice> findByPrezime(String prezime);
     KlijentFizickoLice findByMaticniBr(String jmbg);
+    List<KlijentFizickoLice> findByStatusId(Integer id);
 
     Boolean existsByPravnoLiceIdAndIsPelTrue(Integer pravnoLiceId);//ovo spring po imenu sam fetchuje
-
+    Boolean existsByPravnoLiceIdAndStatusId(Integer pravnoLiceId, Integer status);
 
 }

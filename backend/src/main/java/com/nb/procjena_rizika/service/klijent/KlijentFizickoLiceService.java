@@ -42,6 +42,10 @@ public class KlijentFizickoLiceService {
         return mapper.toResponse(repository.findByMaticniBr(jmbg));
     }
 
+    public List<KFLResponseDto> findByStatusId(Integer id) {
+        return repository.findByStatusId(id).stream().map(mapper :: toResponse).toList();
+    }
+
     public List<KFLResponseDto> findByIme(String ime){
         return repository.findByIme(ime).stream().map(mapper::toResponse).toList();
     }

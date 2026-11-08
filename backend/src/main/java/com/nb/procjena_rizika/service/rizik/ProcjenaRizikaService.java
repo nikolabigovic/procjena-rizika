@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -46,7 +47,6 @@ public class ProcjenaRizikaService {
     private final FirmaRepository firmaRepository;
     private final KlijentFizickoLiceRepository klijentFizickoLiceRepository;
     private final NivoRizikaRepository nivoRizikaRepository;
-
     //create
     @Transactional//da osiguram da ce cijela biti unesena uvijek
     public ProcjenaRizikaResponseDto create(ProcjenaRizikaRequestDto procjenaRizikaRequestDto, String username) {  //username se iz tokena vadi i prosljedjuje
@@ -91,6 +91,8 @@ public class ProcjenaRizikaService {
 
     private void izracunavanjeOcjena(ProcjenaRizika procjenaRizika, ProcjenaRizikaRequestDto procjenaRizikaRequestDto){//identicno kao create metoda samo bez mjenjanja datuma procjene
 
+
+
         for (IndikatorOcjenaRequestDto indikatorOcjenaRequestDto : procjenaRizikaRequestDto.getListaOcjena()) {
             IndikatorOcjena ocjena = indikatorOcjenaMapper.toEntity(indikatorOcjenaRequestDto);
             IndikatorRizika indikatorRizika = indikatorRizikaRepository.findById(indikatorOcjenaRequestDto.getIndikatorRizikaId()).orElseThrow(); //ovo mi je trebalo masu da ukapiram
@@ -120,13 +122,17 @@ public class ProcjenaRizikaService {
 
             NivoRizika nivoRizika=izracunavanjeRizikaService.klasifikacijaRizika(ukupniRizik);
             procjenaRizika.setAutomatskiRizik(false);
-            if(klijentFizickoLiceRepository.existsByPravnoLiceIdAndIsPelTrue(klijent.getId())){
 
+            //provjera automatskog rizika, ako je fl pel, ako ne postoji stvarni vlasnik i ako je sifra djelatnosti rizicna ili ako je checkiran automatski rizik rucno
+            if(klijentFizickoLiceRepository.existsByPravnoLiceIdAndIsPelTrue(klijent.getId()) ||
+                    !klijentFizickoLiceRepository.existsByPravnoLiceIdAndStatusId(klijent.getId(),1) ||
+                    izracunavanjeRizikaService.daLiJeSifraRizicna(klijent.getSifraDjelatnosti()) ||
+                    Boolean.TRUE.equals(procjenaRizikaRequestDto.getAutomatskiRizik())){//ovo boleaan true je tu da bi se null vrijednost shvatala kao false
                 nivoRizika=nivoRizikaRepository.findById(5).orElseThrow();
-                //dodati za ako nema stvarnog vlasnik
-                //dodati za odredjene sifre djelatnosti automatski rizik!
                 procjenaRizika.setAutomatskiRizik(true);
             }
+
+
             procjenaRizika.setNivoRizika(nivoRizika);
 
             procjenaRizika.setDatumNaredneProcjene(izracunavanjeRizikaService.izracunavanjeDatumaNaredneProcjene(nivoRizika));
@@ -134,6 +140,8 @@ public class ProcjenaRizikaService {
 
 
     }
+
+
 
     @Transactional
     public ProcjenaRizikaResponseDto update(Integer id, ProcjenaRizikaRequestDto procjenaRizikaRequestDto, String username) {

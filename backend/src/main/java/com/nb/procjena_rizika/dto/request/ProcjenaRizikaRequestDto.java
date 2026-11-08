@@ -26,5 +26,7 @@ public class ProcjenaRizikaRequestDto {
     @Valid
     private List<IndikatorOcjenaRequestDto> listaOcjena;
 
+    private Boolean automatskiRizik;
+
 
 }
