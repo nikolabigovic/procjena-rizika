@@ -1,14 +1,43 @@
-import { Component } from '@angular/core';
-import {Router, RouterLink} from '@angular/router';
-import {environment} from '../../../environments/environment';
+import {Component, inject, signal} from '@angular/core';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {AuthService} from '../../core/auth/auth-service';
+import {Router} from '@angular/router';
+
 
 @Component({
   selector: 'app-prijava',
-  imports: [RouterLink],
+  imports: [ReactiveFormsModule],
   templateUrl: './prijava.html',
   styleUrl: './prijava.css',
+
 })
 export class Prijava {
-  // constructor() {console.log(environment.apiUrl)  samo mali test da vidim radi li env
-  // }
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
+  form = new FormGroup({
+    username: new FormControl('', {nonNullable: true, validators: [Validators.required]}),
+    password: new FormControl('', {nonNullable: true, validators: [Validators.required]}),
+    rememberMe: new FormControl(false, {nonNullable: true}),
+
+  });
+  greska = signal<string | null>(null)
+
+   prijaviSe() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    this.greska.set(null);
+    const{username, password, rememberMe}=this.form.getRawValue();
+    this.authService.login(username, password, rememberMe).subscribe({
+      next: () => {this.router.navigate(['/klijenti']);},
+      error: () => {this.greska.set("Pogresno korisnicko ime ili lozinka");},
+    })
+  }
 }
+
+
+
+
+

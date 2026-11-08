@@ -121,7 +121,10 @@ public class ProcjenaRizikaService {
             NivoRizika nivoRizika=izracunavanjeRizikaService.klasifikacijaRizika(ukupniRizik);
             procjenaRizika.setAutomatskiRizik(false);
             if(klijentFizickoLiceRepository.existsByPravnoLiceIdAndIsPelTrue(klijent.getId())){
+
                 nivoRizika=nivoRizikaRepository.findById(5).orElseThrow();
+                //dodati za ako nema stvarnog vlasnik
+                //dodati za odredjene sifre djelatnosti automatski rizik!
                 procjenaRizika.setAutomatskiRizik(true);
             }
             procjenaRizika.setNivoRizika(nivoRizika);
