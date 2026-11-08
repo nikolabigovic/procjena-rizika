@@ -22,6 +22,7 @@ import com.nb.procjena_rizika.repository.rizik.IndikatorOcjenaRepository;
 import com.nb.procjena_rizika.repository.rizik.IndikatorRizikaRepository;
 import com.nb.procjena_rizika.repository.rizik.NivoRizikaRepository;
 import com.nb.procjena_rizika.repository.rizik.ProcjenaRizikaRepository;
+import com.nb.procjena_rizika.repository.sifre.SifreDjelatnostiRepository;
 import com.nb.procjena_rizika.service.logika.IzracunavanjePretnjeService;
 import com.nb.procjena_rizika.service.logika.IzracunavanjeRizikaService;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +45,7 @@ public class ProcjenaRizikaService {
     private final IndikatorOcjenaMapper indikatorOcjenaMapper;
     private final IndikatorRizikaRepository indikatorRizikaRepository;
     private final KorisnikRepository korisnikRepository;
-    private final FirmaRepository firmaRepository;
+    private final SifreDjelatnostiRepository sifreDjelatnostiRepository;
     private final KlijentFizickoLiceRepository klijentFizickoLiceRepository;
     private final NivoRizikaRepository nivoRizikaRepository;
     //create
@@ -126,7 +127,7 @@ public class ProcjenaRizikaService {
             //provjera automatskog rizika, ako je fl pel, ako ne postoji stvarni vlasnik i ako je sifra djelatnosti rizicna ili ako je checkiran automatski rizik rucno
             if(klijentFizickoLiceRepository.existsByPravnoLiceIdAndIsPelTrue(klijent.getId()) ||
                     !klijentFizickoLiceRepository.existsByPravnoLiceIdAndStatusId(klijent.getId(),1) ||
-                    izracunavanjeRizikaService.daLiJeSifraRizicna(klijent.getSifraDjelatnosti()) ||
+                    izracunavanjeRizikaService.daLiJeSifraRizicna(sifreDjelatnostiRepository.findBySifra(sifra)) ||
                     Boolean.TRUE.equals(procjenaRizikaRequestDto.getAutomatskiRizik())){//ovo boleaan true je tu da bi se null vrijednost shvatala kao false
                 nivoRizika=nivoRizikaRepository.findById(5).orElseThrow();
                 procjenaRizika.setAutomatskiRizik(true);

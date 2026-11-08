@@ -4,9 +4,11 @@ package com.nb.procjena_rizika.service.logika;
 import com.nb.procjena_rizika.model.rizik.IndikatorOcjena;
 import com.nb.procjena_rizika.model.rizik.NivoRizika;
 import com.nb.procjena_rizika.model.rizik.Ranjivost;
+import com.nb.procjena_rizika.model.sifre.SifreDjelatnosti;
 import com.nb.procjena_rizika.repository.korisnik.FirmaRepository;
 import com.nb.procjena_rizika.repository.rizik.NivoRizikaRepository;
 import com.nb.procjena_rizika.repository.rizik.RanjivostRepository;
+import com.nb.procjena_rizika.repository.sifre.SifreDjelatnostiRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +25,7 @@ public class IzracunavanjeRizikaService {
     private final RanjivostRepository ranjivostRepository;
     private final FirmaRepository firmaRepository;
     private final NivoRizikaRepository nivoRizikaRepository;
-
+    private final SifreDjelatnostiRepository sifreDjelatnostiRepository;
     //fetchovanje ranjivosti po sifri djelatonsti
     public Double getRanjivost(String sifraDjelatnosti) {
         Double ranjivost = ranjivostRepository.findBySifraDjelatnosti(sifraDjelatnosti).getOcjena();
@@ -71,14 +73,16 @@ public class IzracunavanjeRizikaService {
         else return LocalDate.now().plusDays(30);
     }
 
-    public Boolean daLiJeSifraRizicna(String sifraDjelatnosti){
-        List<String> listaRizicnihSifri=new ArrayList<>();
-        listaRizicnihSifri.add("92");//nemam i dalje tacne sifre djelatnosti za koje je ovo uslov pa kao placeholder ostaje ovkao!
-        listaRizicnihSifri.add("93.11");
-        if (listaRizicnihSifri.contains(sifraDjelatnosti)) {
-            return true;
-        }
-        else return false;
+    public Boolean daLiJeSifraRizicna(SifreDjelatnosti sifreDjelatnosti) {
+       if (sifreDjelatnosti!=null){
+           if(sifreDjelatnosti.getRizik()){
+               return true;
+           }
+           return false;
+       }
+       else return false;
+
+
     }
 }
 

@@ -24,7 +24,7 @@ CREATE TABLE `firma` (
   `posljedice` double DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `pib` (`pib`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `grupa_faktora_rizika`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -34,7 +34,7 @@ CREATE TABLE `grupa_faktora_rizika` (
   `naziv` varchar(100) NOT NULL,
   `opis` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `indikator_ocjena`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -49,7 +49,7 @@ CREATE TABLE `indikator_ocjena` (
   KEY `procjena_rizika_id` (`procjena_rizika_id`),
   CONSTRAINT `indikator_ocjena_ibfk_1` FOREIGN KEY (`indikator_rizika_id`) REFERENCES `indikator_rizika` (`id`),
   CONSTRAINT `indikator_ocjena_ibfk_2` FOREIGN KEY (`procjena_rizika_id`) REFERENCES `procjena_rizika` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=542 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `indikator_rizika`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -62,7 +62,7 @@ CREATE TABLE `indikator_rizika` (
   PRIMARY KEY (`id`),
   KEY `grupa_faktora_rizika_id` (`grupa_faktora_rizika_id`),
   CONSTRAINT `indikator_rizika_ibfk_1` FOREIGN KEY (`grupa_faktora_rizika_id`) REFERENCES `grupa_faktora_rizika` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=85 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `klijent_fizicko_lice`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -82,7 +82,7 @@ CREATE TABLE `klijent_fizicko_lice` (
   KEY `status_id` (`status_id`),
   CONSTRAINT `klijent_fizicko_lice_ibfk_1` FOREIGN KEY (`pravno_lice_id`) REFERENCES `klijent_pravno_lice` (`id`),
   CONSTRAINT `klijent_fizicko_lice_ibfk_2` FOREIGN KEY (`status_id`) REFERENCES `status_fizickog_lica` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `klijent_pravno_lice`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -104,7 +104,7 @@ CREATE TABLE `klijent_pravno_lice` (
   UNIQUE KEY `pib` (`pib`),
   KEY `firma_id` (`firma_id`),
   CONSTRAINT `klijent_pravno_lice_ibfk_1` FOREIGN KEY (`firma_id`) REFERENCES `firma` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `korisnik`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -124,7 +124,7 @@ CREATE TABLE `korisnik` (
   KEY `role_id` (`role_id`),
   CONSTRAINT `korisnik_ibfk_1` FOREIGN KEY (`firma_id`) REFERENCES `firma` (`id`),
   CONSTRAINT `korisnik_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `nivo_rizika`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -133,7 +133,7 @@ CREATE TABLE `nivo_rizika` (
   `id` int NOT NULL AUTO_INCREMENT,
   `naziv` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `procjena_rizika`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -158,7 +158,7 @@ CREATE TABLE `procjena_rizika` (
   CONSTRAINT `procjena_rizika_ibfk_1` FOREIGN KEY (`klijent_pravno_lice_id`) REFERENCES `klijent_pravno_lice` (`id`),
   CONSTRAINT `procjena_rizika_ibfk_2` FOREIGN KEY (`korisnik_kreator_id`) REFERENCES `korisnik` (`id`),
   CONSTRAINT `procjena_rizika_ibfk_3` FOREIGN KEY (`nivo_rizika_id`) REFERENCES `nivo_rizika` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `ranjivost`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -169,7 +169,7 @@ CREATE TABLE `ranjivost` (
   `ocjena` double NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `sifra_djelatnosti` (`sifra_djelatnosti`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=652 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `role`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -179,7 +179,7 @@ CREATE TABLE `role` (
   `naziv` varchar(100) NOT NULL,
   `opis` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `sifre_djelatnosti`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -188,10 +188,11 @@ CREATE TABLE `sifre_djelatnosti` (
   `id` int NOT NULL AUTO_INCREMENT,
   `sifra` varchar(10) NOT NULL,
   `opis` varchar(255) DEFAULT NULL,
+  `rizik` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `sifra_UNIQUE` (`sifra`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=652 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `status_fizickog_lica`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -201,7 +202,7 @@ CREATE TABLE `status_fizickog_lica` (
   `naziv` varchar(100) NOT NULL,
   `opis` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `tezina_grupe_rizika`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -214,7 +215,7 @@ CREATE TABLE `tezina_grupe_rizika` (
   PRIMARY KEY (`id`),
   KEY `grupa_faktora_rizika_id` (`grupa_faktora_rizika_id`),
   CONSTRAINT `tezina_grupe_rizika_ibfk_1` FOREIGN KEY (`grupa_faktora_rizika_id`) REFERENCES `grupa_faktora_rizika` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3256 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
