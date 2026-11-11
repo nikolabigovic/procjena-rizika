@@ -37,6 +37,5 @@ public class KPLRequestDto {
     @Email
     @Size(max=100)
     private String email;
-    @NotNull
-    private Integer firmaId;
+
 }

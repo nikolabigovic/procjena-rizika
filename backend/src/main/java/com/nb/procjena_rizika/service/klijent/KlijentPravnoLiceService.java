@@ -6,7 +6,9 @@ import com.nb.procjena_rizika.mapper.KlijentPravnoLiceMapper;
 import com.nb.procjena_rizika.model.klijent.KlijentPravnoLice;
 import com.nb.procjena_rizika.repository.klijent.KlijentPravnoLiceRepository;
 import com.nb.procjena_rizika.repository.korisnik.FirmaRepository;
+import com.nb.procjena_rizika.repository.korisnik.KorisnikRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,9 @@ public class KlijentPravnoLiceService {
     private final KlijentPravnoLiceRepository repository;
     private final KlijentPravnoLiceMapper mapper;
     private final FirmaRepository firmaRepository;
+    private final KorisnikRepository korisnikRepository;
+
+
 //    public KlijentPravnoLiceService (KlijentPravnoLiceRepository repository) {
 //        this.repository = repository;
 //    }
@@ -27,7 +32,9 @@ public class KlijentPravnoLiceService {
     //kreiranje
     public KPLResponseDto create(KPLRequestDto kplRequestDto) {
         KlijentPravnoLice klijentPravnoLice = mapper.toEntity(kplRequestDto);
-        klijentPravnoLice.setFirma(firmaRepository.findById(kplRequestDto.getFirmaId()).orElseThrow());
+
+        String username= SecurityContextHolder.getContext().getAuthentication().getName();
+        klijentPravnoLice.setFirma(korisnikRepository.findOptionalByUsername(username).orElseThrow().getFirma());
         repository.save(klijentPravnoLice);
         return mapper.toResponse(klijentPravnoLice);
     }
