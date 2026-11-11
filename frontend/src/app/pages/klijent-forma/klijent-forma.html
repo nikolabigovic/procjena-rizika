@@ -1,39 +1,42 @@
-<section class="card p">
-  <h2>Pravno lice</h2>
-  <div class="grid2">
-    <label class="field">Naziv<input type="text" value="Lovćen Invest a.d."></label>
-    <label class="field">PIB<input type="text" value="02456789"></label>
-    <label class="field">Sjedište<input type="text" value="Podgorica"></label>
-    <label class="field">Šifra djelatnosti<input type="text" value="64.92"></label>
-    <label class="field">Datum osnivanja<input type="text" value="14.03.2016."></label>
-    <label class="field">Datum uspostavljanja poslovnog odnosa<input type="text" value="02.09.2024."></label>
-    <label class="field">Telefon<input type="text" value="+382 20 000 000"></label>
-    <label class="field">E-mail<input type="text" value="kontakt&#64;primjer.me"></label>
-  </div>
-  <label class="field">Razlog poslovnog odnosa<input type="text" value="Finansijsko savjetovanje"></label>
-  <label class="chk"><input type="checkbox" checked> Rezident Crne Gore</label>
-</section>
+<form [formGroup]="form" (ngSubmit) = "sacuvaj()">
+  <section class="card p">
+    <h2>Pravno lice</h2>
+    <div class="grid2">
+      <label class="field">Naziv<input type="text" formControlName="naziv"></label>
+      <label class="field">PIB<input type="text" formControlName="pib"></label>
+      <label class="field">Sjedište<input type="text" formControlName="sjediste"></label>
+      <label class="field">Šifra djelatnosti<input type="text" formControlName="sifraDjelatnosti"></label>
+      <label class="field">Datum osnivanja<input type="date" formControlName="datumOsnivanjaFirme"></label>
+      <label class="field">Datum uspostavljanja poslovnog odnosa<input type="date" formControlName="datumUPO"></label>
+      <label class="field">Telefon<input type="text" formControlName="telefon"></label>
+      <label class="field">E-mail<input type="text" formControlName="email"></label>
+    </div>
+    <label class="field">Razlog poslovnog odnosa<input type="text" formControlName="razlogPoslovnogOdnosa"></label>
+    <label class="chk"><input type="checkbox" formControlName="resident"> Rezident Crne Gore</label>
+  </section>
 
-<section class="card p">
-  <div class="hd">
-    <h2>Fizička lica</h2>
-    <button class="btn o" type="button">
-      <svg class="ic sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-      Dodaj lice
-    </button>
-  </div>
-  <div class="scroll">
-    <table class="tbl" style="min-width: 640px">
-      <thead><tr><th>Ime i prezime</th><th>Matični broj</th><th>Prebivalište</th><th>Status</th><th>PEP</th></tr></thead>
-      <tbody>
-        <tr><td>Marko Petrović</td><td>1203980200012</td><td>Podgorica</td><td><span class="chip">Stvarni vlasnik</span></td><td><span class="chip pep">PEP</span></td></tr>
-        <tr><td>Ana Vukčević</td><td>0507985200034</td><td>Nikšić</td><td><span class="chip">Direktor</span></td><td>—</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
 
-<div class="hd" style="justify-content: flex-end">
-  <a class="btn o" routerLink="/klijenti">Otkaži</a>
-  <a class="btn" routerLink="/klijenti">Sačuvaj</a>
-</div>
+  <section class="card p">
+    <div class="hd">
+      <h2>Fizička lica</h2>
+      <button class="btn o" type="button">
+        <svg class="ic sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        Dodaj lice
+      </button>
+    </div>
+    <div class="scroll">
+      <table class="tbl" style="min-width: 640px">
+        <thead><tr><th>Ime i prezime</th><th>Matični broj</th><th>Prebivalište</th><th>Status</th><th>PEP</th></tr></thead>
+        <tbody>
+          <tr><td>Marko Petrović</td><td>1203980200012</td><td>Podgorica</td><td><span class="chip">Stvarni vlasnik</span></td><td><span class="chip pep">PEP</span></td></tr>
+          <tr><td>Ana Vukčević</td><td>0507985200034</td><td>Nikšić</td><td><span class="chip">Direktor</span></td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  @if (greska()) { <p>{{ greska() }}</p> }
+  <div class="hd" style="justify-content: flex-end">
+    <a class="btn o" routerLink="/klijenti">Otkaži</a>
+    <button class="btn" type="submit" [disabled]="form.invalid">Sačuvaj</button>
+  </div>
+</form>
