@@ -65,7 +65,7 @@ Slojevita arhitektura: `controller → service → repository`.
 ```
 backend/    Spring Boot REST API
 frontend/   Angular aplikacija
-database/   schema.sql (struktura baze) i seed.sql (šifarnici)
+database/   schema.sql (struktura baze), seed.sql (šifarnici) i demo.sql (opcioni demo podaci)
 ```
 
 ---
@@ -76,10 +76,21 @@ database/   schema.sql (struktura baze) i seed.sql (šifarnici)
 
 **1. Baza**
 ```sql
-CREATE DATABASE rizik_db;
+CREATE DATABASE rizik_db CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 ```
-Zatim učitaj, ovim redom, `database/schema.sql` pa `database/seed.sql`
-(npr. kroz MySQL Workbench ili `mysql -u root -p rizik_db < database/schema.sql`).
+Zatim učitaj, ovim redom:
+1. `database/schema.sql`: struktura baze
+2. `database/seed.sql`: šifarnici (indikatori, šifre djelatnosti, nivoi rizika...)
+3. `database/demo.sql`: *opciono*, demo firma, korisnik i klijenti (vidi [Demo nalog](#demo-nalog))
+
+Npr. kroz MySQL Workbench (File → Open SQL Script, pa pokretanje cijele skripte) ili:
+```bash
+mysql -u root -p rizik_db < database/schema.sql
+mysql -u root -p rizik_db < database/seed.sql
+mysql -u root -p rizik_db < database/demo.sql
+```
+> ⚠️ `schema.sql` nema `USE` naredbu i briše postojeće tabele (`DROP TABLE IF EXISTS`).
+> U Workbenchu prije učitavanja provjeri da je `rizik_db` izabrana kao default schema.
 
 **2. Backend**
 
@@ -101,7 +112,26 @@ npx ng serve
 ```
 Aplikacija je dostupna na `http://localhost:4200`.
 
-**Prijava:** `POST /api/auth/login-jwt?rememberMe=false` sa `username` i `password` u tijelu zahtjeva.
+---
+
+## Demo nalog
+
+Ako je učitan `database/demo.sql`, prijavi se na `http://localhost:4200` sa:
+
+| Username | Lozinka | Uloga |
+|---|---|---|
+| `demo` | `demo123` | KORISNIK |
+
+Demo sadrži tri izmišljena klijenta, svaki prikazuje drugačije pravilo:
+- **Market Primjer**: ima stvarnog vlasnika, nivo rizika zavisi od ocjena indikatora
+- **Transport Primjer**: stvarni vlasnik je politički eksponirano lice → automatski visok rizik
+- **Nekretnine Primjer**: rizična šifra djelatnosti i nema stvarnog vlasnika → automatski visok rizik
+
+Procjene nisu unaprijed unesene, napravi ih kroz stranicu *Nova procjena*.
+
+> Nalog je namijenjen isključivo lokalnom pokretanju.
+
+Za testiranje API-ja direktno: `POST /api/auth/login-jwt?rememberMe=false` sa `username` i `password` u tijelu zahtjeva.
 
 ---
 
@@ -113,8 +143,9 @@ Aplikacija je dostupna na `http://localhost:4200`.
 - ✅ Poslovna logika: izračunavanje rizika end-to-end, ponderi iz baze, PEL pravilo, rok od 7 dana za ispravke
 - ✅ Spring Security + JWT, uloge ADMIN/KORISNIK
 - ✅ Globalno rukovanje greškama i validacija
-- 🔄 Angular frontend: u toku
-- ⏳ Planirano: unit testovi, Swagger/OpenAPI dokumentacija, Docker Compose, Flyway migracije
+- ✅ Angular frontend (MVP): prijava, lista klijenata sa nivoom rizika i datumom naredne procjene, unos klijenta sa fizičkim licima, nova procjena sa izračunom rizika, istorija procjena
+- 🔄 U toku: izloženost, admin panel, dorada korisničkog interfejsa
+- ⏳ Planirano: unit testovi, Swagger/OpenAPI dokumentacija, Docker Compose, Liquibase migracije
 
 ---
 
