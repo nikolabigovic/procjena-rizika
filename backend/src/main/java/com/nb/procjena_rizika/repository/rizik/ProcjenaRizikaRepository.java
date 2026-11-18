@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface ProcjenaRizikaRepository extends JpaRepository<ProcjenaRizika, Integer> {
 
@@ -22,4 +24,6 @@ public interface ProcjenaRizikaRepository extends JpaRepository<ProcjenaRizika, 
     List<ProcjenaRizika> findByNivoRizikaId(Integer nivoRizikaId);
 
     List<ProcjenaRizika> findTop20ByOrderByDatumProcjeneDesc();
+
+    Optional<ProcjenaRizika> findTopByKlijentPravnoLiceIdOrderByDatumProcjeneDesc(Integer klijentPravnoLiceId); //kako je ovaj jpa kul svgm
 }

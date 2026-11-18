@@ -23,4 +23,8 @@ public class KPLResponseDto {
     private String telefon;
     private String email;
     private Integer firmaId;
+    //dodavanje zbog ui-a fronta
+    private Integer nivoRizikaId;
+    private String nivoRizikaNaziv;
+    private LocalDate datumNaredneProcjene;
 }

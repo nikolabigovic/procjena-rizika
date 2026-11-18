@@ -9,6 +9,9 @@ import org.mapstruct.*;
 public interface KlijentPravnoLiceMapper {
 
     @Mapping(target="firmaId", source = "firma.id")
+    @Mapping(target = "nivoRizikaId", ignore = true)
+    @Mapping(target = "nivoRizikaNaziv", ignore = true)
+    @Mapping(target = "datumNaredneProcjene", ignore = true)
     KPLResponseDto toResponse(KlijentPravnoLice klijentPravnoLice);
 
     @Mapping(target = "id", ignore = true)

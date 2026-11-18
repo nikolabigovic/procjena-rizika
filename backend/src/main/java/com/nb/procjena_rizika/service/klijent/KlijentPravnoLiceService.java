@@ -4,14 +4,18 @@ import com.nb.procjena_rizika.dto.request.KPLRequestDto;
 import com.nb.procjena_rizika.dto.response.KPLResponseDto;
 import com.nb.procjena_rizika.mapper.KlijentPravnoLiceMapper;
 import com.nb.procjena_rizika.model.klijent.KlijentPravnoLice;
+import com.nb.procjena_rizika.model.rizik.ProcjenaRizika;
 import com.nb.procjena_rizika.repository.klijent.KlijentPravnoLiceRepository;
 import com.nb.procjena_rizika.repository.korisnik.FirmaRepository;
 import com.nb.procjena_rizika.repository.korisnik.KorisnikRepository;
+import com.nb.procjena_rizika.repository.rizik.ProcjenaRizikaRepository;
+import com.nb.procjena_rizika.service.rizik.ProcjenaRizikaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor //da ne pisem eksplicitno konstruktor
@@ -21,6 +25,7 @@ public class KlijentPravnoLiceService {
     private final KlijentPravnoLiceMapper mapper;
     private final FirmaRepository firmaRepository;
     private final KorisnikRepository korisnikRepository;
+    private final ProcjenaRizikaRepository procjenaRizikaRepository;
 
 
 //    public KlijentPravnoLiceService (KlijentPravnoLiceRepository repository) {
@@ -50,7 +55,18 @@ public class KlijentPravnoLiceService {
     }
 
     public List<KPLResponseDto> findAll() {
-        return repository.findAll().stream().map(mapper::toResponse).toList();
+        return repository.findAll().stream().map(klijent -> {
+            KPLResponseDto kplResponseDto = mapper.toResponse(klijent);
+            Optional<ProcjenaRizika> procjena= procjenaRizikaRepository.findTopByKlijentPravnoLiceIdOrderByDatumProcjeneDesc(klijent.getId());
+            if (procjena.isPresent()) {
+                kplResponseDto.setNivoRizikaId(procjena.get().getNivoRizika().getId());
+                kplResponseDto.setNivoRizikaNaziv(procjena.get().getNivoRizika().getNaziv());
+                kplResponseDto.setDatumNaredneProcjene(procjena.get().getDatumNaredneProcjene());
+            }
+            return kplResponseDto;
+        }).toList();
+
+
     }
 
     public List<KPLResponseDto> findByNaziv(String naziv) {
