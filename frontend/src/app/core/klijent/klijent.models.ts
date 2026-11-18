@@ -11,6 +11,9 @@ export interface KlijentPravnoLice {
   telefon: string;
   email: string;
   firmaId:number;
+  nivoRizikaId:number | null;
+  nivoRizikaNaziv: string | null;
+  datumNaredneProcjene: string | null;
 }
 export interface KlijentPravnoLiceRequest{
   naziv: string;

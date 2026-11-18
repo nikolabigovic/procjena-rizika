@@ -34,8 +34,8 @@
           <td>{{ k.naziv }}</td>
           <td>{{ k.pib }}</td>
           <td>{{ k.sifraDjelatnosti }}</td>
-          <td>—</td>
-          <td>—</td>
+          <td><span class="chip c{{k.nivoRizikaId}}">{{k.nivoRizikaNaziv}}</span></td>
+          <td>{{k.datumNaredneProcjene | date:'dd.MM.yyyy'}}</td>
           <td><a class="act" routerLink="/klijenti/novi">Uredi</a></td>
         </tr>
         } @empty {

@@ -2,10 +2,11 @@ import {Component, inject, OnInit, signal} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {KlijentService} from '../../core/klijent/klijent';
 import {KlijentPravnoLice, KlijentPravnoLiceRequest} from '../../core/klijent/klijent.models';
+import {DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-klijenti',
-  imports: [RouterLink],
+  imports: [RouterLink, DatePipe],
   templateUrl: './klijenti.html',
 })
 export class Klijenti implements OnInit {
