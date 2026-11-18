@@ -10,4 +10,5 @@ public interface IndikatorRizikaRepository extends JpaRepository<IndikatorRizika
 
     IndikatorRizika findByNaziv(String naziv);
 
+
 }
