@@ -7,6 +7,8 @@ import com.nb.procjena_rizika.model.rizik.ProcjenaRizika;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 @Repository
 public interface ProcjenaRizikaRepository extends JpaRepository<ProcjenaRizika, Integer> {
@@ -18,4 +20,6 @@ public interface ProcjenaRizikaRepository extends JpaRepository<ProcjenaRizika, 
     List<ProcjenaRizika> findByKlijentPravnoLiceId(Integer klijentPravnoLiceId);
 
     List<ProcjenaRizika> findByNivoRizikaId(Integer nivoRizikaId);
+
+    List<ProcjenaRizika> findTop20ByOrderByDatumProcjeneDesc();
 }

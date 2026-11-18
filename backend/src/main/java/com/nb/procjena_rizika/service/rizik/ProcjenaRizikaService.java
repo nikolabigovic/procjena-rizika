@@ -84,6 +84,10 @@ public class ProcjenaRizikaService {
         return procjenaRizikaRepository.findByNivoRizikaId(nivoRizikaId).stream().map(procjenaRizikaMapper::toResponse).toList();
     }
 
+    public List<ProcjenaRizikaResponseDto> findPoslednje() {
+        return procjenaRizikaRepository.findTop20ByOrderByDatumProcjeneDesc().stream().map(procjenaRizikaMapper::toResponse).toList();
+    }
+
 
 
 

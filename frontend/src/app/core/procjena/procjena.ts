@@ -14,4 +14,8 @@ export class Procjena {
     return this.http.post<ProcjenaRizikaResponse>(this.url,request,)
   }
 
+  getPoslednje(): Observable<ProcjenaRizikaResponse[]>{
+    return this.http.get<ProcjenaRizikaResponse[]>(`${this.url}/poslednje`);
+  }
+
 }

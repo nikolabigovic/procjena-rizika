@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -54,6 +55,11 @@ public class ProcjenaRizikaController {
     @GetMapping("/nivo/{nivo}")
     public ResponseEntity<List<ProcjenaRizikaResponseDto>> findByNivo(@PathVariable Integer nivo){
         return ResponseEntity.ok(procjenaRizikaService.findByNivoRizikaId(nivo));
+    }
+
+    @GetMapping("/poslednje")
+    public ResponseEntity<List<ProcjenaRizikaResponseDto>> findByPoslednje() {
+        return ResponseEntity.ok(procjenaRizikaService.findPoslednje());
     }
 
 
