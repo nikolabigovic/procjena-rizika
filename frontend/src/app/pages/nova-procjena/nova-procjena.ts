@@ -29,6 +29,8 @@ export class NovaProcjena implements OnInit {
   form= this.fb.group({
     klijentPravnoLiceId: [null as number | null, Validators.required],
     ocjene: this.fb.array<number | null>([]),
+    automatskiRizik:[false],
+    obrazlozenje:[''],
   });
 
   grupe= computed(()=>{
@@ -61,13 +63,20 @@ export class NovaProcjena implements OnInit {
       this.greska.set("izaberite klijenta i ocjenite sve indikatore");
       return;
     }
+    const auto = this.form.controls.automatskiRizik.value;
+    const obrazlozenje = this.form.controls.obrazlozenje.value?.trim();
+
+    if (auto && !obrazlozenje) {
+      this.greska.set('Unesite obrazloženje za ručno postavljen visok rizik.');
+      return;
+    }
 
     const v = this.form.getRawValue();
 
     const request: ProcjenaRizikaRequest = {
       klijentPravnoLiceId: v.klijentPravnoLiceId!,
-      obrazlozenje: null,
-      automatskiRizik:false,
+      obrazlozenje: obrazlozenje || null,
+      automatskiRizik:auto ?? false,
       listaOcjena: this.indikatori().map((ind, i)=> ({
         indikatorRizikaId:ind.id,
         ocjena: v.ocjene[i]!,
@@ -90,6 +99,27 @@ export class NovaProcjena implements OnInit {
       }
 
     });
+  }
+
+
+
+  postaviSveNa1(){
+    for(const kontrola of this.form.controls.ocjene.controls){
+      kontrola.setValue(1);
+    }
+  }
+
+  razlozi = [
+    'Klijent ili povezano lice je politički eksponirano lice (PEP).',
+    'Nije moguće pouzdano utvrditi stvarnog vlasnika.',
+    'Klijent posluje sa visokorizičnim zemljama ili jurisdikcijama.',
+    'Postoji sumnja na pranje novca ili finansiranje terorizma.',
+    'Negativne informacije o klijentu iz javnih izvora.',
+    'Neuobičajene ili složene transakcije bez jasne ekonomske svrhe.',
+  ];
+
+  izaberiRazlog(razlog:string){
+    this.form.controls.obrazlozenje.setValue(razlog);
   }
 
 

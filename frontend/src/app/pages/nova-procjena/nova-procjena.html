@@ -11,7 +11,33 @@
     </label>
     @if (greska()) { <p>{{ greska() }}</p> }
   </section>
+  <section class="card p">
+    <h2>Automatski rizik</h2>
 
+    <label class="chk">
+      <input type="checkbox" formControlName="automatskiRizik">
+      Ručno postavi visok rizik
+    </label>
+
+    @if (form.controls.automatskiRizik.value) {
+    <label class="field">Ponuđeni razlozi
+      <select #razlog (change)="izaberiRazlog(razlog.value)">
+        <option value="" disabled selected>Izaberite razlog</option>
+        @for (r of razlozi; track r) {
+        <option [value]="r">{{ r }}</option>
+        }
+        <option value="">Drugo (upišite ispod)</option>
+      </select>
+    </label>
+    }
+
+    <label class="field">Obrazloženje
+      <textarea formControlName="obrazlozenje" rows="4"></textarea>
+    </label>
+  </section>
+  <div class="hd" style="justify-content: flex-end">
+    <button class="btn o" type="button" (click)="postaviSveNa1()">Postavi sve na 1</button>
+  </div>
     <div>
       @for (g of grupe(); track g.id) {
       <section class="card p">
@@ -32,8 +58,7 @@
       </section>
       }
     </div>
-
-    <div class="hd" style="justify-content: flex-end">
+  <div class="hd" style="justify-content: flex-end">
       <button class="btn" type="button" (click)="save()" [disabled]="form.invalid || salje()">Izračunaj i sačuvaj</button>
   </div>
 </form>
