@@ -24,3 +24,34 @@ export interface KlijentPravnoLiceRequest{
   telefon: string;
   email: string;
 }
+
+export interface KlijentFizickoLiceRequest {
+  ime: string;
+  prezime: string;
+  maticniBr: string;
+  datumRodjenja: string;
+  mjestoPrebivalista: string;
+  isPel: boolean;
+  pravnoLiceId:number;
+  statusId:number;
+}
+
+export interface KlijentFizickoLiceResponse {
+  id: number;
+  ime: string;
+  prezime: string;
+  maticniBr: string;
+  datumRodjenja: string;
+  mjestoPrebivalista: string;
+  isPel: boolean;
+  pravnoLiceId:number;
+  statusId:number;
+
+}
+
+export const STATUSI_FIZICKOG_LICA = [
+  { id: 1, naziv: 'Stvarni vlasnik' },
+  { id: 2, naziv: 'Direktor' },
+  { id: 3, naziv: 'Osnivač' },
+  { id: 4, naziv: 'Ovlašćeno lice' },
+];

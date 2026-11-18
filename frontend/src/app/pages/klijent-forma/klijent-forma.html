@@ -19,19 +19,37 @@
   <section class="card p">
     <div class="hd">
       <h2>Fizička lica</h2>
-      <button class="btn o" type="button">
+      <button class="btn o" type="button" (click)="dodajLice()">
         <svg class="ic sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
         Dodaj lice
       </button>
     </div>
-    <div class="scroll">
-      <table class="tbl" style="min-width: 640px">
-        <thead><tr><th>Ime i prezime</th><th>Matični broj</th><th>Prebivalište</th><th>Status</th><th>PEP</th></tr></thead>
-        <tbody>
-          <tr><td>Marko Petrović</td><td>1203980200012</td><td>Podgorica</td><td><span class="chip">Stvarni vlasnik</span></td><td><span class="chip pep">PEP</span></td></tr>
-          <tr><td>Ana Vukčević</td><td>0507985200034</td><td>Nikšić</td><td><span class="chip">Direktor</span></td><td>—</td></tr>
-        </tbody>
-      </table>
+    <div formArrayName="fizickaLica" style="display: flex; flex-direction: column; gap: 16px">
+      @for (lice of form.controls.fizickaLica.controls; track lice; let i = $index) {
+      <div [formGroupName]="i" style="border: 1px solid #e0e0e0; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+        <div class="hd">
+          <b>Lice {{ i + 1 }}</b>
+          <button type="button" class="act d" (click)="ukloniLice(i)">Ukloni</button>
+        </div>
+        <div class="grid2">
+          <label class="field">Ime<input type="text" formControlName="ime"></label>
+          <label class="field">Prezime<input type="text" formControlName="prezime"></label>
+          <label class="field">Matični broj<input type="text" formControlName="maticniBr" maxlength="13"></label>
+          <label class="field">Datum rođenja<input type="date" formControlName="datumRodjenja"></label>
+          <label class="field">Mjesto prebivališta<input type="text" formControlName="mjestoPrebivalista"></label>
+          <label class="field">Status
+            <select formControlName="statusId">
+              @for (s of statusi; track s.id) {
+              <option [ngValue]="s.id">{{ s.naziv }}</option>
+              }
+            </select>
+          </label>
+        </div>
+        <label class="chk"><input type="checkbox" formControlName="isPel"> Politički eksponirano lice (PEP)</label>
+      </div>
+      } @empty {
+      <p class="note">Nema dodatih lica. Bez stvarnog vlasnika procjena će automatski biti visok rizik.</p>
+      }
     </div>
   </section>
   @if (greska()) { <p>{{ greska() }}</p> }
