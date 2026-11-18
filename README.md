@@ -1,152 +1,85 @@
-# AML/CFT Risk Assessment System
+# AML/CFT Risk Assessment
 
-Full-stack web aplikacija za automatizovanu procjenu rizika od pranja novca i finansiranja terorizma,
-razvijena u skladu sa Zakonom o sprečavanju pranja novca i finansiranja terorizma (Crna Gora, 2023)
-i smjernicama FOJ-a.
+Aplikacija za procjenu rizika od pranja novca i finansiranja terorizma za klijente (pravna lica),
+rađena po crnogorskom Zakonu o sprečavanju pranja novca i finansiranja terorizma i smjernicama FOJ-a.
 
----
+Korisnik unese klijenta i povezana fizička lica, ocijeni 84 indikatora rizika, a aplikacija izračuna
+nivo rizika i datum naredne procjene.
 
-## O projektu
+## Kako se računa rizik
 
-Sistem omogućava obveznicima zakona upravljanje klijentima (pravnim i fizičkim licima),
-automatizovanu procjenu rizičnosti klijenata kroz 5 grupa faktora rizika, ponderisanje i
-kategorizaciju klijenata, te automatsko određivanje roka naredne procjene na osnovu nivoa rizika.
+Ukupni rizik = prijetnja × ranjivost × posljedica
 
-### Kako se računa rizik
+- **prijetnja**: prosjek ocjena po 5 grupa faktora rizika, ponderisan težinama koje zavise od šifre djelatnosti klijenta
+- **ranjivost**: iz šifarnika, po šifri djelatnosti
+- **posljedica**: zadata na nivou firme koja radi procjenu
 
-1. **Prijetnja**: korisnik ocjenjuje indikatore rizika. Ocjene se grupišu po grupama faktora
-   (geografski, klijent, transakcija, proizvod/usluga, distributivni kanal), računa se prosjek po grupi,
-   a grupe se ponderišu težinama koje zavise od **šifre djelatnosti** klijenta.
-2. **Ranjivost**: preuzima se iz šifarnika na osnovu šifre djelatnosti klijenta.
-3. **Posljedica**: definisana na nivou obveznika (firme) koja vrši procjenu.
-4. **Ukupni rizik = prijetnja × ranjivost × posljedica**, klasifikovan u nivoe:
-
-| Ukupni rizik | Nivo rizika | Naredna procjena |
+| Ukupni rizik | Nivo | Naredna procjena |
 |---|---|---|
-| ≤ 5 | Niži rizik | za 12 mjeseci |
-| 5 – 20 | Srednje niži rizik | za 12 mjeseci |
-| 20 – 50 | Srednji rizik | za 6 mjeseci |
-| 50 – 95 | Srednje visok rizik | za 3 mjeseca |
-| 95 – 125 | Visok rizik | za 1 mjesec |
+| ≤ 5 | Niži | 12 mjeseci |
+| 5 – 20 | Srednje niži | 12 mjeseci |
+| 20 – 50 | Srednji | 6 mjeseci |
+| 50 – 95 | Srednje visok | 3 mjeseca |
+| 95 – 125 | Visok | 1 mjesec |
 
-### Poslovna pravila
+Klijent automatski dobija visok rizik ako je neko od povezanih lica politički eksponirano, ako nema
+upisanog stvarnog vlasnika, ako mu je šifra djelatnosti označena kao rizična, ili ako korisnik to ručno
+označi uz obrazloženje. Procjena se može ispraviti samo u prvih 7 dana.
 
-- Ako pravno lice ima povezano fizičko lice koje je **politički eksponirano lice (PEL)**,
-  procjena se automatski označava kao visokorizična.
-- Procjena se može ispraviti samo u roku od **7 dana** od kreiranja (u suprotnom `409 Conflict`).
+## Tehnologije
 
----
-
-## Tech Stack
-
-**Backend:** Java 26, Spring Boot 4.1, Spring Security, JWT, Spring Data JPA / Hibernate,
-Bean Validation, MapStruct, Lombok, Maven
-
-**Baza:** MySQL 8
-
-**Frontend:** Angular 22
-
----
-
-## Arhitektura (backend)
-
-Slojevita arhitektura: `controller → service → repository`.
-
-- **DTO + MapStruct**: kontroleri primaju i vraćaju request/response DTO-ove, entiteti se ne izlažu
-  direktno kroz API (npr. lozinka korisnika nikada ne ulazi u odgovor).
-- **Sigurnost**: JWT autentifikacija (stateless), uloge `ADMIN` / `KORISNIK`, lozinke heširane (BCrypt).
-- **Rukovanje greškama**: globalni `@RestControllerAdvice` sa jedinstvenim formatom greške
-  (400 validacija, 401 neautentifikovan, 404 nije pronađeno, 409 konflikt).
-
----
-
-## Struktura repozitorijuma
+- Backend: Java 26, Spring Boot 4.1, Spring Security + JWT, Spring Data JPA, MapStruct, Lombok
+- Frontend: Angular 22
+- Baza: MySQL 8
 
 ```
 backend/    Spring Boot REST API
 frontend/   Angular aplikacija
-database/   schema.sql (struktura baze), seed.sql (šifarnici) i demo.sql (opcioni demo podaci)
+database/   schema.sql, seed.sql (šifarnici), demo.sql (demo podaci)
 ```
 
----
+## Pokretanje
 
-## Pokretanje lokalno
+Potrebni su Java 26, Node.js i MySQL 8.
 
-**Preduslovi:** Java 26, Node.js, MySQL 8
-
-**1. Baza**
+Baza:
 ```sql
 CREATE DATABASE rizik_db CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 ```
-Zatim učitaj, ovim redom:
-1. `database/schema.sql`: struktura baze
-2. `database/seed.sql`: šifarnici (indikatori, šifre djelatnosti, nivoi rizika...)
-3. `database/demo.sql`: *opciono*, demo firma, korisnik i klijenti (vidi [Demo nalog](#demo-nalog))
-
-Npr. kroz MySQL Workbench (File → Open SQL Script, pa pokretanje cijele skripte) ili:
 ```bash
 mysql -u root -p rizik_db < database/schema.sql
 mysql -u root -p rizik_db < database/seed.sql
 mysql -u root -p rizik_db < database/demo.sql
 ```
-> ⚠️ `schema.sql` nema `USE` naredbu i briše postojeće tabele (`DROP TABLE IF EXISTS`).
-> U Workbenchu prije učitavanja provjeri da je `rizik_db` izabrana kao default schema.
+Ako koristiš Workbench, prije pokretanja skripti izaberi `rizik_db` kao default schema, jer `schema.sql`
+nema `USE` i briše postojeće tabele.
 
-**2. Backend**
-
-Postavi environment varijable:
-- `DB_PASSWORD`: lozinka za MySQL korisnika `root`
-- `JWT_SECRET`: proizvoljan string od najmanje 32 karaktera
-
+Backend (treba postaviti `DB_PASSWORD` i `JWT_SECRET`, min. 32 karaktera):
 ```bash
 cd backend
 ./mvnw spring-boot:run
 ```
-API je dostupan na `http://localhost:8080`.
 
-**3. Frontend**
+Frontend:
 ```bash
 cd frontend
 npm install
 npx ng serve
 ```
-Aplikacija je dostupna na `http://localhost:4200`.
 
----
+Aplikacija je na `http://localhost:4200`, API na `http://localhost:8080`.
 
 ## Demo nalog
 
-Ako je učitan `database/demo.sql`, prijavi se na `http://localhost:4200` sa:
+Ako je učitan `demo.sql`: **demo** / **demo123**
 
-| Username | Lozinka | Uloga |
-|---|---|---|
-| `demo` | `demo123` | KORISNIK |
+Tu su tri izmišljena klijenta, bez procjena, pa ih možeš napraviti sam:
+jedan sa normalnim izračunom i dva koja automatski idu u visok rizik (PEP vlasnik i rizična djelatnost bez stvarnog vlasnika).
 
-Demo sadrži tri izmišljena klijenta, svaki prikazuje drugačije pravilo:
-- **Market Primjer**: ima stvarnog vlasnika, nivo rizika zavisi od ocjena indikatora
-- **Transport Primjer**: stvarni vlasnik je politički eksponirano lice → automatski visok rizik
-- **Nekretnine Primjer**: rizična šifra djelatnosti i nema stvarnog vlasnika → automatski visok rizik
+## Šta je urađeno, a šta ne
 
-Procjene nisu unaprijed unesene, napravi ih kroz stranicu *Nova procjena*.
+Radi: prijava, klijenti sa fizičkim licima, nova procjena, istorija procjena, nivo rizika i naredna procjena u listi klijenata.
 
-> Nalog je namijenjen isključivo lokalnom pokretanju.
+Sljedeće: izloženost, admin panel, sređivanje UI-ja, unit testovi, Swagger, Docker Compose, Liquibase.
 
-Za testiranje API-ja direktno: `POST /api/auth/login-jwt?rememberMe=false` sa `username` i `password` u tijelu zahtjeva.
-
----
-
-## Status
-
-- ✅ Baza podataka, entiteti i šifarnici
-- ✅ REST API: CRUD za firme, korisnike, klijente i procjene
-- ✅ Request/response DTO-ovi i MapStruct mapperi
-- ✅ Poslovna logika: izračunavanje rizika end-to-end, ponderi iz baze, PEL pravilo, rok od 7 dana za ispravke
-- ✅ Spring Security + JWT, uloge ADMIN/KORISNIK
-- ✅ Globalno rukovanje greškama i validacija
-- ✅ Angular frontend (MVP): prijava, lista klijenata sa nivoom rizika i datumom naredne procjene, unos klijenta sa fizičkim licima, nova procjena sa izračunom rizika, istorija procjena
-- 🔄 U toku: izloženost, admin panel, dorada korisničkog interfejsa
-- ⏳ Planirano: unit testovi, Swagger/OpenAPI dokumentacija, Docker Compose, Liquibase migracije
-
----
-
-*Moj prvi full-stack projekat. Kod se kontinuirano unapređuje.*
+Ovo mi je prvi full-stack projekat, pa se kod još mijenja.
