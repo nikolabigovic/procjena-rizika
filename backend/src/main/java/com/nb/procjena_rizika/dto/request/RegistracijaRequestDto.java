@@ -15,10 +15,10 @@ public class RegistracijaRequestDto {
 
     @NotNull
     @Valid
-    private FirmaRequestDto firmaRequestDto;
+    private FirmaRequestDto firma;
 
     @NotNull
     @Valid
-    private KorisnikRegistracijaRequestDto korisnikRegistracijaRequestDto;
+    private KorisnikRegistracijaRequestDto korisnik;
 
 }

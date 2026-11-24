@@ -39,8 +39,8 @@ public class RegistracijaService {
     //create
     @Transactional
     public void registracija(RegistracijaRequestDto registracijaRequestDto) {
-        FirmaRequestDto firma= registracijaRequestDto.getFirmaRequestDto();
-        KorisnikRegistracijaRequestDto korisnik = registracijaRequestDto.getKorisnikRegistracijaRequestDto();
+        FirmaRequestDto firma= registracijaRequestDto.getFirma();
+        KorisnikRegistracijaRequestDto korisnik = registracijaRequestDto.getKorisnik();
 
         if(firmaRepository.findByPib(firma.getPib())==null &&
                 korisnikRepository.findByUsername(korisnik.getUsername())==null){
