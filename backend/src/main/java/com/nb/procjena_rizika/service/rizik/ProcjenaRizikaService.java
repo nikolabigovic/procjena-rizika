@@ -23,6 +23,7 @@ import com.nb.procjena_rizika.repository.rizik.IndikatorRizikaRepository;
 import com.nb.procjena_rizika.repository.rizik.NivoRizikaRepository;
 import com.nb.procjena_rizika.repository.rizik.ProcjenaRizikaRepository;
 import com.nb.procjena_rizika.repository.sifre.SifreDjelatnostiRepository;
+import com.nb.procjena_rizika.service.klijent.TrenutniKorisnikService;
 import com.nb.procjena_rizika.service.logika.IzracunavanjePretnjeService;
 import com.nb.procjena_rizika.service.logika.IzracunavanjeRizikaService;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,7 @@ public class ProcjenaRizikaService {
     private final SifreDjelatnostiRepository sifreDjelatnostiRepository;
     private final KlijentFizickoLiceRepository klijentFizickoLiceRepository;
     private final NivoRizikaRepository nivoRizikaRepository;
+    private final TrenutniKorisnikService trenutniKorisnikService;
     //create
     @Transactional//da osiguram da ce cijela biti unesena uvijek
     public ProcjenaRizikaResponseDto create(ProcjenaRizikaRequestDto procjenaRizikaRequestDto, String username) {  //username se iz tokena vadi i prosljedjuje
@@ -85,7 +87,7 @@ public class ProcjenaRizikaService {
     }
 
     public List<ProcjenaRizikaResponseDto> findPoslednje() {
-        return procjenaRizikaRepository.findTop20ByOrderByDatumProcjeneDesc().stream().map(procjenaRizikaMapper::toResponse).toList();
+        return procjenaRizikaRepository.findTop20ByKlijentPravnoLiceFirmaIdOrderByDatumProcjeneDesc(trenutniKorisnikService.getFirma().getId() ).stream().map(procjenaRizikaMapper::toResponse).toList();
     }
 
 
