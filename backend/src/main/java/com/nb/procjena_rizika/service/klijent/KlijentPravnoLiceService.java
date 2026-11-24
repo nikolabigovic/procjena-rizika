@@ -1,6 +1,7 @@
 package com.nb.procjena_rizika.service.klijent;
 
 import com.nb.procjena_rizika.dto.request.KPLRequestDto;
+import com.nb.procjena_rizika.dto.request.KorisnikRequestDto;
 import com.nb.procjena_rizika.dto.response.KPLResponseDto;
 import com.nb.procjena_rizika.mapper.KlijentPravnoLiceMapper;
 import com.nb.procjena_rizika.model.klijent.KlijentPravnoLice;
@@ -26,6 +27,7 @@ public class KlijentPravnoLiceService {
     private final FirmaRepository firmaRepository;
     private final KorisnikRepository korisnikRepository;
     private final ProcjenaRizikaRepository procjenaRizikaRepository;
+    private final TrenutniKorisnikService trenutniKorisnikService;
 
 
 //    public KlijentPravnoLiceService (KlijentPravnoLiceRepository repository) {
@@ -38,8 +40,8 @@ public class KlijentPravnoLiceService {
     public KPLResponseDto create(KPLRequestDto kplRequestDto) {
         KlijentPravnoLice klijentPravnoLice = mapper.toEntity(kplRequestDto);
 
-        String username= SecurityContextHolder.getContext().getAuthentication().getName();
-        klijentPravnoLice.setFirma(korisnikRepository.findOptionalByUsername(username).orElseThrow().getFirma());
+         // sve da ide preko trenutno ulogovanog korisnika
+        klijentPravnoLice.setFirma(trenutniKorisnikService.getFirma());
         repository.save(klijentPravnoLice);
         return mapper.toResponse(klijentPravnoLice);
     }
@@ -55,7 +57,7 @@ public class KlijentPravnoLiceService {
     }
 
     public List<KPLResponseDto> findAll() {
-        return repository.findAll().stream().map(klijent -> {
+        return repository.findAllByFirmaId(trenutniKorisnikService.getFirma().getId()).stream().map(klijent -> {
             KPLResponseDto kplResponseDto = mapper.toResponse(klijent);
             Optional<ProcjenaRizika> procjena= procjenaRizikaRepository.findTopByKlijentPravnoLiceIdOrderByDatumProcjeneDesc(klijent.getId());
             if (procjena.isPresent()) {
@@ -63,6 +65,7 @@ public class KlijentPravnoLiceService {
                 kplResponseDto.setNivoRizikaNaziv(procjena.get().getNivoRizika().getNaziv());
                 kplResponseDto.setDatumNaredneProcjene(procjena.get().getDatumNaredneProcjene());
             }
+
             return kplResponseDto;
         }).toList();
 
