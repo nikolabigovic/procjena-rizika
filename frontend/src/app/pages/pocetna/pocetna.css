@@ -1,0 +1,76 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #e8eaf6;
+}
+.wrap {
+  display: flex;
+  justify-content: center;
+  padding: 96px 24px;
+  box-sizing: border-box;
+}
+.kartica {
+  width: 100%;
+  max-width: 520px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  padding: 40px 32px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.naslov {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.naslov h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 500;
+}
+.stavke {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.stavke li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.stavke strong {
+  font-size: 15px;
+  font-weight: 500;
+}
+.tacka {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-top: 7px;
+  border-radius: 50%;
+  background: #3f51b5;
+}
+.dugmad {
+  display: flex;
+  gap: 12px;
+}
+.dugmad .btn {
+  flex: 1;
+}
+@media (max-width: 480px) {
+  .wrap {
+    padding: 48px 16px;
+  }
+  .kartica {
+    padding: 32px 20px;
+  }
+  .dugmad {
+    flex-direction: column;
+  }
+}
