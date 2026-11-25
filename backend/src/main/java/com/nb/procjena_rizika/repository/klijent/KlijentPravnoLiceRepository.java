@@ -11,7 +11,8 @@ import java.util.List;
 public interface KlijentPravnoLiceRepository extends JpaRepository<KlijentPravnoLice,Integer> {
 
     List<KlijentPravnoLice> findByNaziv(String naziv);
-    KlijentPravnoLice findByPib(String pib);
+    //KlijentPravnoLice findByPib(String pib);
+    KlijentPravnoLice findByPibAndFirmaId(String pib, Integer firmaId);
     //KlijentPravnoLice findById(int id);
 
     List<KlijentPravnoLice> findBySjediste(String sjediste);
@@ -19,6 +20,8 @@ public interface KlijentPravnoLiceRepository extends JpaRepository<KlijentPravno
     List<KlijentPravnoLice> findBySifraDjelatnosti(String sifraDjelatonsti);
 
     List<KlijentPravnoLice> findAllByFirmaId(Integer firmaId);
+
+    Boolean existsByPibAndFirmaId(String pib, Integer firmaId);
 
 
 }

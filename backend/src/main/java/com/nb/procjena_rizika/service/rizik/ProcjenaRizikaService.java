@@ -9,6 +9,7 @@ import com.nb.procjena_rizika.exception.IzmjenaNijeDozvoljenaException;
 import com.nb.procjena_rizika.mapper.IndikatorOcjenaMapper;
 import com.nb.procjena_rizika.mapper.ProcjenaRizikaMapper;
 import com.nb.procjena_rizika.model.klijent.KlijentPravnoLice;
+import com.nb.procjena_rizika.model.korisnik.Firma;
 import com.nb.procjena_rizika.model.korisnik.Korisnik;
 import com.nb.procjena_rizika.model.rizik.IndikatorOcjena;
 import com.nb.procjena_rizika.model.rizik.IndikatorRizika;
@@ -110,11 +111,13 @@ public class ProcjenaRizikaService {
             List<IndikatorOcjena> listaOcjena=procjenaRizika.getOcjene();
 
             KlijentPravnoLice klijent=procjenaRizika.getKlijentPravnoLice();
-            var sifra= klijent.getSifraDjelatnosti();
+            Firma firma=klijent.getFirma();
+            var sifraKlijenta= klijent.getSifraDjelatnosti();
+            var sifraFirme= firma.getSifraDjelatnosti();
             var pib= procjenaRizika.getKorisnikKreator().getFirma().getPib();
 
-            Double prijetnja=izracunavanjePretnjeService.pretnja(listaOcjena,sifra);
-            Double ranjivost=izracunavanjeRizikaService.getRanjivost(sifra);
+            Double prijetnja=izracunavanjePretnjeService.pretnja(listaOcjena,sifraKlijenta);
+            Double ranjivost=izracunavanjeRizikaService.getRanjivost(sifraFirme);
             Double posljedica=izracunavanjeRizikaService.getPosljedice(pib);
 
 
@@ -133,7 +136,7 @@ public class ProcjenaRizikaService {
             //provjera automatskog rizika, ako je fl pel, ako ne postoji stvarni vlasnik i ako je sifra djelatnosti rizicna ili ako je checkiran automatski rizik rucno
             if(klijentFizickoLiceRepository.existsByPravnoLiceIdAndIsPelTrue(klijent.getId()) ||
                     !klijentFizickoLiceRepository.existsByPravnoLiceIdAndStatusId(klijent.getId(),1) ||
-                    izracunavanjeRizikaService.daLiJeSifraRizicna(sifreDjelatnostiRepository.findBySifra(sifra)) ||
+                    izracunavanjeRizikaService.daLiJeSifraRizicna(sifreDjelatnostiRepository.findBySifra(sifraKlijenta)) ||
                     Boolean.TRUE.equals(procjenaRizikaRequestDto.getAutomatskiRizik())){//ovo boleaan true je tu da bi se null vrijednost shvatala kao false
                 nivoRizika=nivoRizikaRepository.findById(5).orElseThrow();
                 procjenaRizika.setAutomatskiRizik(true);

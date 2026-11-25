@@ -3,8 +3,10 @@ package com.nb.procjena_rizika.service.klijent;
 import com.nb.procjena_rizika.dto.request.KPLRequestDto;
 import com.nb.procjena_rizika.dto.request.KorisnikRequestDto;
 import com.nb.procjena_rizika.dto.response.KPLResponseDto;
+import com.nb.procjena_rizika.exception.KlijentVecPostojiExcpetion;
 import com.nb.procjena_rizika.mapper.KlijentPravnoLiceMapper;
 import com.nb.procjena_rizika.model.klijent.KlijentPravnoLice;
+import com.nb.procjena_rizika.model.korisnik.Firma;
 import com.nb.procjena_rizika.model.rizik.ProcjenaRizika;
 import com.nb.procjena_rizika.repository.klijent.KlijentPravnoLiceRepository;
 import com.nb.procjena_rizika.repository.korisnik.FirmaRepository;
@@ -42,6 +44,9 @@ public class KlijentPravnoLiceService {
 
          // sve da ide preko trenutno ulogovanog korisnika
         klijentPravnoLice.setFirma(trenutniKorisnikService.getFirma());
+        if (repository.existsByPibAndFirmaId(klijentPravnoLice.getPib(),klijentPravnoLice.getFirma().getId())){
+            throw new KlijentVecPostojiExcpetion("");
+        }
         repository.save(klijentPravnoLice);
         return mapper.toResponse(klijentPravnoLice);
     }
@@ -53,7 +58,12 @@ public class KlijentPravnoLiceService {
     }
 
     public KPLResponseDto findByPib(String pib) {
-        return mapper.toResponse(repository.findByPib(pib));
+        Firma firma = trenutniKorisnikService.getFirma();
+        return findByPibAndFirmaId(pib, firma.getId());
+    }
+
+    public KPLResponseDto findByPibAndFirmaId(String pib, Integer firmaId) {
+        return mapper.toResponse(repository.findByPibAndFirmaId(pib,firmaId));
     }
 
     public List<KPLResponseDto> findAll() {

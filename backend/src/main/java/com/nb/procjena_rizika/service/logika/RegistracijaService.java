@@ -7,6 +7,7 @@ import com.nb.procjena_rizika.dto.request.RegistracijaRequestDto;
 import com.nb.procjena_rizika.dto.response.FirmaResponseDto;
 import com.nb.procjena_rizika.dto.response.KorisnikResponseDto;
 import com.nb.procjena_rizika.exception.NedozvoljenaRegistracijaException;
+import com.nb.procjena_rizika.exception.NepostojecaSifraDjelatnostiException;
 import com.nb.procjena_rizika.mapper.FirmaMapper;
 import com.nb.procjena_rizika.mapper.KorisnikMapper;
 import com.nb.procjena_rizika.model.korisnik.Firma;
@@ -14,6 +15,7 @@ import com.nb.procjena_rizika.model.korisnik.Korisnik;
 import com.nb.procjena_rizika.repository.korisnik.FirmaRepository;
 import com.nb.procjena_rizika.repository.korisnik.KorisnikRepository;
 import com.nb.procjena_rizika.repository.korisnik.RoleRepository;
+import com.nb.procjena_rizika.repository.rizik.RanjivostRepository;
 import com.nb.procjena_rizika.service.korisnik.FirmaService;
 import com.nb.procjena_rizika.service.korisnik.KorisnikService;
 import jakarta.transaction.Transactional;
@@ -35,6 +37,7 @@ public class RegistracijaService {
 
     private final RoleRepository  roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RanjivostRepository ranjivostRepository;
 
     //create
     @Transactional
@@ -45,6 +48,9 @@ public class RegistracijaService {
         if(firmaRepository.findByPib(firma.getPib())==null &&
                 korisnikRepository.findByUsername(korisnik.getUsername())==null){
             Firma firmaEntity=firmaMapper.toEntity(firma);
+            if(ranjivostRepository.findBySifraDjelatnosti(firma.getSifraDjelatnosti())==null) {
+                throw new NepostojecaSifraDjelatnostiException("Nepostojeca sifra djelatnosti!");
+            }
             firmaRepository.save(firmaEntity);
 
             Korisnik korisnikEntity= new  Korisnik(); //nesto me nije bila volja preko mappera

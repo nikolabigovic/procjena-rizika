@@ -1,10 +1,13 @@
 package com.nb.procjena_rizika.service.logika;
 
 
+import com.nb.procjena_rizika.model.klijent.KlijentPravnoLice;
+import com.nb.procjena_rizika.model.korisnik.Firma;
 import com.nb.procjena_rizika.model.rizik.IndikatorOcjena;
 import com.nb.procjena_rizika.model.rizik.NivoRizika;
 import com.nb.procjena_rizika.model.rizik.Ranjivost;
 import com.nb.procjena_rizika.model.sifre.SifreDjelatnosti;
+import com.nb.procjena_rizika.repository.klijent.KlijentPravnoLiceRepository;
 import com.nb.procjena_rizika.repository.korisnik.FirmaRepository;
 import com.nb.procjena_rizika.repository.rizik.NivoRizikaRepository;
 import com.nb.procjena_rizika.repository.rizik.RanjivostRepository;
@@ -26,10 +29,15 @@ public class IzracunavanjeRizikaService {
     private final FirmaRepository firmaRepository;
     private final NivoRizikaRepository nivoRizikaRepository;
     private final SifreDjelatnostiRepository sifreDjelatnostiRepository;
+
     //fetchovanje ranjivosti po sifri djelatonsti
     public Double getRanjivost(String sifraDjelatnosti) {
-        Double ranjivost = ranjivostRepository.findBySifraDjelatnosti(sifraDjelatnosti).getOcjena();
-        return ranjivost;
+        Ranjivost ranjivost = ranjivostRepository.findBySifraDjelatnosti(sifraDjelatnosti);
+        if (ranjivost==null){
+            throw new IllegalStateException("ne postoje ranjivost za tu sifraDjelatnosti");
+        }
+        Double ocjena= ranjivost.getOcjena();
+        return ocjena;
     }
 
     //fetchovanje posljedice iz firme

@@ -101,7 +101,7 @@ CREATE TABLE `klijent_pravno_lice` (
   `email` varchar(100) DEFAULT NULL,
   `firma_id` int NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `pib` (`pib`),
+  UNIQUE KEY `uk_pib_firma` (`pib`,`firma_id`),
   KEY `firma_id` (`firma_id`),
   CONSTRAINT `klijent_pravno_lice_ibfk_1` FOREIGN KEY (`firma_id`) REFERENCES `firma` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
