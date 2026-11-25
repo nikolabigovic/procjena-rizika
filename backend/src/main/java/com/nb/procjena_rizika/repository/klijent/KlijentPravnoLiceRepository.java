@@ -21,6 +21,7 @@ public interface KlijentPravnoLiceRepository extends JpaRepository<KlijentPravno
 
     List<KlijentPravnoLice> findAllByFirmaId(Integer firmaId);
 
+
     Boolean existsByPibAndFirmaId(String pib, Integer firmaId);
 
 
