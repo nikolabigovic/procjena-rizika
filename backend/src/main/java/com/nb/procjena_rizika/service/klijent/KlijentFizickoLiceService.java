@@ -55,7 +55,7 @@ public class KlijentFizickoLiceService {
         if(kpl.getFirma().getId().equals(firmaId)){
             return mapper.toResponse(repository.findByIdAndPravnoLiceFirmaId(id,firmaId));
         }
-        else throw new ProvjeraVlasnistvaException("Nemate pravo da pristupi fizikom licu!")
+        else throw new ProvjeraVlasnistvaException("Nemate pravo da pristupi fizikom licu!");
 
 
     }
