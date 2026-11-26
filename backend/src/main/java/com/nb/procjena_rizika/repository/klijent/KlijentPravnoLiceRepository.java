@@ -16,8 +16,10 @@ public interface KlijentPravnoLiceRepository extends JpaRepository<KlijentPravno
     //KlijentPravnoLice findById(int id);
 
     List<KlijentPravnoLice> findBySjediste(String sjediste);
+    List<KlijentPravnoLice> findBySjedisteAndFirmaId(String sjediste, Integer firmaId);
 
     List<KlijentPravnoLice> findBySifraDjelatnosti(String sifraDjelatonsti);
+    List<KlijentPravnoLice> findBySifraDjelatnostiAndFirmaId(String sifraDjelatnosti, Integer firmaId);
 
     List<KlijentPravnoLice> findAllByFirmaId(Integer firmaId);
 
