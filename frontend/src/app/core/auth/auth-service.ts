@@ -2,7 +2,7 @@ import { Service, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { JwtResponse, LoginRequest } from './auth.models';
+import {JwtResponse, LoginRequest, RegisterRequest} from './auth.models';
 
 @Service()
 export class AuthService {
@@ -16,6 +16,16 @@ export class AuthService {
       .post<JwtResponse>(`${environment.apiUrl}/auth/login-jwt`, body, {params:{rememberMe}})
       .pipe(tap(res=> localStorage.setItem(this.TOKEN_KEY, res.token)));
 }
+
+
+
+  register(registerRequest: RegisterRequest): Observable<void> {
+    return this.http
+      .post<void>(`${environment.apiUrl}/auth/register`, registerRequest)
+  }
+
+
+
 
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);

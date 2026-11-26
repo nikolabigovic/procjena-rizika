@@ -26,4 +26,8 @@ public interface ProcjenaRizikaRepository extends JpaRepository<ProcjenaRizika, 
     List<ProcjenaRizika> findTop20ByOrderByDatumProcjeneDesc();
 
     Optional<ProcjenaRizika> findTopByKlijentPravnoLiceIdOrderByDatumProcjeneDesc(Integer klijentPravnoLiceId); //kako je ovaj jpa kul svgm
+
+    List<ProcjenaRizika> findTop20ByKlijentPravnoLiceFirmaIdOrderByDatumProcjeneDesc(Integer firmaId);
+
+    Optional<ProcjenaRizika> findByIdAndKlijentPravnoLiceFirmaId(Integer id, Integer kreatorFirmaId);
 }

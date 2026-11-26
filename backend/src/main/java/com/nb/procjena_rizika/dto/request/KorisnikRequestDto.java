@@ -30,8 +30,8 @@ public class KorisnikRequestDto {
     private String password;
     @NotNull
     private Integer roleId;
-    @NotNull
-    private Integer firmaId;
+//    @NotNull
+//    private Integer firmaId; izbaceno jer sad imam trenutniKorisnikservice
 
 
 }

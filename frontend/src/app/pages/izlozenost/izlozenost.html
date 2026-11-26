@@ -1,12 +1,40 @@
-<div class="kpis">
-  <div class="kpi raised"><small>Prosječni ukupni rizik</small><b>44,6</b><span class="chip c3" style="align-self: flex-start">Srednji rizik</span></div>
-  <div class="kpi raised"><small>Broj klijenata</small><b>6</b></div>
-  <div class="kpi raised"><small>Visok i srednje visok rizik</small><b>2</b></div>
-  <div class="kpi raised"><small>Procjene koje ističu uskoro</small><b>1</b></div>
-</div>
+@if (greska()) {
+  <p class="note">{{ greska() }}</p>
+}
 
+@if (podaci(); as p) {
+  <div class="kpis">
+    <div class="kpi raised">
+      <small>Prosječni ukupni rizik</small>
+      <b>{{ p.ukupanProsjecniRizik ?? '—' }}</b>
+      <span class="chip c{{ p.nivoRizikaId }}" style="align-self: flex-start">{{ p.nivoRizikaNaziv }}</span>
+    </div>
+    <div class="kpi raised">
+      <small>Broj klijenata</small>
+      <b>{{ p.brojKlijenataSaProcjenom + p.brojKlijenataBezProcjene }}</b>
+    </div>
+    <div class="kpi raised">
+      <small>Klijenti sa procjenom</small>
+      <b>{{ p.brojKlijenataSaProcjenom }}</b>
+    </div>
+    <div class="kpi raised">
+      <small>Klijenti bez procjene</small>
+      <b>{{ p.brojKlijenataBezProcjene }}</b>
+    </div>
+    <div class="kpi raised">
+      <small>Visok i srednje visok rizik</small>
+      <b>{{ p.brojVisokoISrednjeVisokoRizicnih }}</b>
+    </div>
+    <div class="kpi raised">
+      <small>Procjene koje ističu uskoro</small>
+      <b>{{ p.brojProcjenaKojeIsticu }}</b>
+    </div>
+  </div>
+}
+
+<!-- TODO: tabela raspodjele je placeholder (fiksni podaci) - povezati sa backendom kasnije -->
 <div class="card">
-  <h2 class="h">Raspodjela klijenata po nivou rizika</h2>
+  <h2 class="h">Raspodjela klijenata po nivou rizika (ovo je staticno i dalje)</h2>
   <div class="scroll">
     <table class="tbl" style="min-width: 720px">
       <thead><tr><th>Nivo rizika</th><th>Opseg</th><th>Broj klijenata</th><th>Udio</th></tr></thead>

@@ -18,5 +18,8 @@ public interface KlijentFizickoLiceRepository extends JpaRepository<KlijentFizic
 
     Boolean existsByPravnoLiceIdAndIsPelTrue(Integer pravnoLiceId);//ovo spring po imenu sam fetchuje
     Boolean existsByPravnoLiceIdAndStatusId(Integer pravnoLiceId, Integer status);
+    Boolean existsByPravnoLiceId(Integer pravnoLiceId);
+
+    KlijentFizickoLice findByIdAndPravnoLiceFirmaId(Integer id, Integer firmaId);
 
 }

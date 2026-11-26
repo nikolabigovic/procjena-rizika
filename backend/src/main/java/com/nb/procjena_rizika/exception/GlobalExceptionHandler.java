@@ -94,4 +94,46 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(NedozvoljenaRegistracijaException.class)
+    public ResponseEntity<ErrorResponse> handleNedozvoljenaRegistracija(NedozvoljenaRegistracijaException exception, HttpServletRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                exception.getMessage(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(KlijentVecPostojiExcpetion.class)
+    public ResponseEntity<ErrorResponse> handleKlijentVecPostoji(KlijentVecPostojiExcpetion exception, HttpServletRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                exception.getMessage(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+    @ExceptionHandler(NepostojecaSifraDjelatnostiException.class)
+    public ResponseEntity<ErrorResponse> handleNepostojecaSifraDjelatnosti(NepostojecaSifraDjelatnostiException exception, HttpServletRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST  .getReasonPhrase(),
+                exception.getMessage(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(ProvjeraVlasnistvaException.class)
+    public ResponseEntity<ErrorResponse> handleProvjeraVlasnistva(ProvjeraVlasnistvaException exception, HttpServletRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND  .getReasonPhrase(),
+                exception.getMessage(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
 }

@@ -8,13 +8,16 @@ import { Istorija } from './pages/istorija/istorija';
 import { Izlozenost } from './pages/izlozenost/izlozenost';
 import { Admin } from './pages/admin/admin';
 import {authGuard} from './core/auth/auth-guard';
+import {Registracija} from './pages/registracija/registracija';
+import {Pocetna} from './pages/pocetna/pocetna';
 
 // Rute služe samo da se može kliktati između ekrana dizajna.
 // `data.naslov` je tekst koji se prikazuje u plavoj gornjoj traci.
 export const routes: Routes = [
   { path: 'prijava', component: Prijava },
-  {
-    path: '',
+  {path: 'registracija', component: Registracija},
+  {path: 'pocetna', component: Pocetna},
+  {path: '',
     component: Shell,
     canActivate: [authGuard],
     children: [

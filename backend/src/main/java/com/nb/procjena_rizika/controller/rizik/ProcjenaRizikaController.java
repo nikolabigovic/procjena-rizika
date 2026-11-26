@@ -28,9 +28,9 @@ public class ProcjenaRizikaController {
 
 
     @PostMapping
-    public ResponseEntity<ProcjenaRizikaResponseDto> save(@Valid @RequestBody ProcjenaRizikaRequestDto procjenaRizikaRequestDto, Authentication authentication) {
+    public ResponseEntity<ProcjenaRizikaResponseDto> save(@Valid @RequestBody ProcjenaRizikaRequestDto procjenaRizikaRequestDto) {
 
-        return new ResponseEntity<>(procjenaRizikaService.create(procjenaRizikaRequestDto, authentication.getName()), HttpStatus.CREATED);
+        return new ResponseEntity<>(procjenaRizikaService.create(procjenaRizikaRequestDto), HttpStatus.CREATED);
     }
 
 
@@ -64,8 +64,8 @@ public class ProcjenaRizikaController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProcjenaRizikaResponseDto> update(@PathVariable Integer id,@Valid  @RequestBody ProcjenaRizikaRequestDto procjena, Authentication authentication) {
-        return ResponseEntity.ok(procjenaRizikaService.update(id, procjena, authentication.getName()));
+    public ResponseEntity<ProcjenaRizikaResponseDto> update(@PathVariable Integer id,@Valid  @RequestBody ProcjenaRizikaRequestDto procjena) {
+        return ResponseEntity.ok(procjenaRizikaService.update(id, procjena));
     }
 
     @DeleteMapping("/{id}")

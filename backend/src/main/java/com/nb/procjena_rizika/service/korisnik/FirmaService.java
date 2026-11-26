@@ -6,6 +6,7 @@ import com.nb.procjena_rizika.dto.response.FirmaResponseDto;
 import com.nb.procjena_rizika.mapper.FirmaMapper;
 import com.nb.procjena_rizika.model.korisnik.Firma;
 import com.nb.procjena_rizika.repository.korisnik.FirmaRepository;
+import com.nb.procjena_rizika.repository.rizik.RanjivostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +18,12 @@ public class FirmaService {
 
     private final FirmaRepository repository;
     private final FirmaMapper mapper;
+    private final RanjivostRepository ranjivostRepository;
     //create
 
     public FirmaResponseDto create(FirmaRequestDto firmaRequestDto) {
         Firma firma = mapper.toEntity(firmaRequestDto);
+
         repository.save(firma);
         return mapper.toResponse(firma);
     }

@@ -40,6 +40,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))  //da bi za neautorizovane korisnike vratilo 401 a ne 403
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST,"/api/korisnik").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/firma").denyAll()
+
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/pr/edit").hasRole("ADMIN")

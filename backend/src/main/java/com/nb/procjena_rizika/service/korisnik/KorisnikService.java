@@ -9,6 +9,7 @@ import com.nb.procjena_rizika.model.korisnik.Korisnik;
 import com.nb.procjena_rizika.repository.korisnik.FirmaRepository;
 import com.nb.procjena_rizika.repository.korisnik.KorisnikRepository;
 import com.nb.procjena_rizika.repository.korisnik.RoleRepository;
+import com.nb.procjena_rizika.service.klijent.TrenutniKorisnikService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,13 +26,14 @@ public class KorisnikService {
     private final KorisnikMapper korisnikMapper;
     private final RoleRepository roleRepository;
     private final FirmaRepository firmaRepository;
+    private final TrenutniKorisnikService trenutniKorisnikService;
 
     //CREATE
 
     public KorisnikResponseDto create(KorisnikRequestDto korisnikRequestDto) {
         Korisnik korisnik = korisnikMapper.toEntity(korisnikRequestDto);
         korisnik.setRole(roleRepository.findById(korisnikRequestDto.getRoleId()).orElseThrow());
-        korisnik.setFirma(firmaRepository.findById(korisnikRequestDto.getFirmaId()).orElseThrow());
+        korisnik.setFirma(trenutniKorisnikService.getFirma());
         korisnik.setPassword(passwordEncoder.encode(korisnik.getPassword()));
         repository.save(korisnik);
         return korisnikMapper.toResponse(korisnik);
@@ -87,9 +89,9 @@ public class KorisnikService {
             postojeci.setRole(roleRepository.findById(dto.getRoleId()).orElseThrow());
         }
 
-        if (dto.getFirmaId()!=null){
-            postojeci.setFirma(firmaRepository.findById(dto.getFirmaId()).orElseThrow());
-        }
+
+            postojeci.setFirma(trenutniKorisnikService.getFirma());
+
 
         repository.save(postojeci);
         return korisnikMapper.toResponse(postojeci);

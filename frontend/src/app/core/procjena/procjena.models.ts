@@ -53,3 +53,15 @@ export interface ProcjenaRizikaResponse{
 
   obrazlozenje: string | null;
 }
+
+export interface IzlozenostDashboard{
+  ukupanProsjecniRizik: number | null;
+  nivoRizikaId: number;
+  nivoRizikaNaziv: string;
+
+  brojKlijenataSaProcjenom: number;
+  brojKlijenataBezProcjene: number;
+
+  brojVisokoISrednjeVisokoRizicnih: number;
+  brojProcjenaKojeIsticu: number;
+}

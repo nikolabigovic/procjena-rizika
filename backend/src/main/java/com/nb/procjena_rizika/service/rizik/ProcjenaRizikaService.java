@@ -6,9 +6,11 @@ import com.nb.procjena_rizika.dto.request.ProcjenaRizikaRequestDto;
 import com.nb.procjena_rizika.dto.response.IndikatorOcjenaResponseDto;
 import com.nb.procjena_rizika.dto.response.ProcjenaRizikaResponseDto;
 import com.nb.procjena_rizika.exception.IzmjenaNijeDozvoljenaException;
+import com.nb.procjena_rizika.exception.ProvjeraVlasnistvaException;
 import com.nb.procjena_rizika.mapper.IndikatorOcjenaMapper;
 import com.nb.procjena_rizika.mapper.ProcjenaRizikaMapper;
 import com.nb.procjena_rizika.model.klijent.KlijentPravnoLice;
+import com.nb.procjena_rizika.model.korisnik.Firma;
 import com.nb.procjena_rizika.model.korisnik.Korisnik;
 import com.nb.procjena_rizika.model.rizik.IndikatorOcjena;
 import com.nb.procjena_rizika.model.rizik.IndikatorRizika;
@@ -23,8 +25,10 @@ import com.nb.procjena_rizika.repository.rizik.IndikatorRizikaRepository;
 import com.nb.procjena_rizika.repository.rizik.NivoRizikaRepository;
 import com.nb.procjena_rizika.repository.rizik.ProcjenaRizikaRepository;
 import com.nb.procjena_rizika.repository.sifre.SifreDjelatnostiRepository;
+import com.nb.procjena_rizika.service.klijent.TrenutniKorisnikService;
 import com.nb.procjena_rizika.service.logika.IzracunavanjePretnjeService;
 import com.nb.procjena_rizika.service.logika.IzracunavanjeRizikaService;
+import com.nb.procjena_rizika.service.logika.ProvjeraVlasnistvaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,28 +52,41 @@ public class ProcjenaRizikaService {
     private final SifreDjelatnostiRepository sifreDjelatnostiRepository;
     private final KlijentFizickoLiceRepository klijentFizickoLiceRepository;
     private final NivoRizikaRepository nivoRizikaRepository;
+    private final TrenutniKorisnikService trenutniKorisnikService;
+    private final ProvjeraVlasnistvaService provjeraVlasnistvaService;
     //create
     @Transactional//da osiguram da ce cijela biti unesena uvijek
-    public ProcjenaRizikaResponseDto create(ProcjenaRizikaRequestDto procjenaRizikaRequestDto, String username) {  //username se iz tokena vadi i prosljedjuje
-        Korisnik korisnik = korisnikRepository.findOptionalByUsername(username).orElseThrow();
+    public ProcjenaRizikaResponseDto create(ProcjenaRizikaRequestDto procjenaRizikaRequestDto) {
+        Korisnik korisnik = trenutniKorisnikService.getKorisnik();
         KlijentPravnoLice klijent = klijentPravnoLiceRepository.findById(procjenaRizikaRequestDto.getKlijentPravnoLiceId()).orElseThrow();
 
-        ProcjenaRizika procjenaRizika = new ProcjenaRizika();
-        procjenaRizika.setKlijentPravnoLice(klijent);
-        procjenaRizika.setObrazlozenje(procjenaRizikaRequestDto.getObrazlozenje());
-        procjenaRizika.setKorisnikKreator(korisnik);
-        procjenaRizika.setDatumProcjene(LocalDateTime.now());
-        izracunavanjeOcjena(procjenaRizika, procjenaRizikaRequestDto);
+        if(provjeraVlasnistvaService.nadjiSvog(klijent.getFirma().getId())){
+            ProcjenaRizika procjenaRizika = new ProcjenaRizika();
+            procjenaRizika.setKlijentPravnoLice(klijent);
+            procjenaRizika.setObrazlozenje(procjenaRizikaRequestDto.getObrazlozenje());
+            procjenaRizika.setKorisnikKreator(korisnik);
+            procjenaRizika.setDatumProcjene(LocalDateTime.now());
+            izracunavanjeOcjena(procjenaRizika, procjenaRizikaRequestDto);
 
 
 
-        ProcjenaRizika sacuvana = procjenaRizikaRepository.save(procjenaRizika);
-        return procjenaRizikaMapper.toResponse(sacuvana);
+            ProcjenaRizika sacuvana = procjenaRizikaRepository.save(procjenaRizika);
+            return procjenaRizikaMapper.toResponse(sacuvana);
+        }
+        else throw new ProvjeraVlasnistvaException("Ne mozete napraviti provjeru za klijenta koji nije u vasoj firmi!");
+
+
     }
 
     //read
-    public ProcjenaRizikaResponseDto findById(int id) {
-        return procjenaRizikaMapper.toResponse(procjenaRizikaRepository.findById(id).orElseThrow());
+    public ProcjenaRizikaResponseDto findById(Integer id) {
+        return findByIdAndKlijentPravnoLiceFirmaId(id, trenutniKorisnikService.getFirma().getId());
+    }
+
+    public ProcjenaRizikaResponseDto findByIdAndKlijentPravnoLiceFirmaId(int id, Integer firmaId) {
+
+            return procjenaRizikaMapper.toResponse(procjenaRizikaRepository.findByIdAndKlijentPravnoLiceFirmaId(id, firmaId).orElseThrow());
+
     }
 
     public List<ProcjenaRizikaResponseDto> findByKorisnik(Integer korisnik) {
@@ -85,14 +102,13 @@ public class ProcjenaRizikaService {
     }
 
     public List<ProcjenaRizikaResponseDto> findPoslednje() {
-        return procjenaRizikaRepository.findTop20ByOrderByDatumProcjeneDesc().stream().map(procjenaRizikaMapper::toResponse).toList();
+        return procjenaRizikaRepository.findTop20ByKlijentPravnoLiceFirmaIdOrderByDatumProcjeneDesc(trenutniKorisnikService.getFirma().getId() ).stream().map(procjenaRizikaMapper::toResponse).toList();
     }
 
 
 
 
 
-    //update dostupan samo u prvih 7 dana od pravljenja procjene zbog eventualnih user errora.
 
     private void izracunavanjeOcjena(ProcjenaRizika procjenaRizika, ProcjenaRizikaRequestDto procjenaRizikaRequestDto){//identicno kao create metoda samo bez mjenjanja datuma procjene
 
@@ -108,11 +124,13 @@ public class ProcjenaRizikaService {
             List<IndikatorOcjena> listaOcjena=procjenaRizika.getOcjene();
 
             KlijentPravnoLice klijent=procjenaRizika.getKlijentPravnoLice();
-            var sifra= klijent.getSifraDjelatnosti();
+            Firma firma=klijent.getFirma();
+            var sifraKlijenta= klijent.getSifraDjelatnosti();
+            var sifraFirme= firma.getSifraDjelatnosti();
             var pib= procjenaRizika.getKorisnikKreator().getFirma().getPib();
 
-            Double prijetnja=izracunavanjePretnjeService.pretnja(listaOcjena,sifra);
-            Double ranjivost=izracunavanjeRizikaService.getRanjivost(sifra);
+            Double prijetnja=izracunavanjePretnjeService.pretnja(listaOcjena,sifraKlijenta);
+            Double ranjivost=izracunavanjeRizikaService.getRanjivost(sifraFirme);
             Double posljedica=izracunavanjeRizikaService.getPosljedice(pib);
 
 
@@ -131,7 +149,7 @@ public class ProcjenaRizikaService {
             //provjera automatskog rizika, ako je fl pel, ako ne postoji stvarni vlasnik i ako je sifra djelatnosti rizicna ili ako je checkiran automatski rizik rucno
             if(klijentFizickoLiceRepository.existsByPravnoLiceIdAndIsPelTrue(klijent.getId()) ||
                     !klijentFizickoLiceRepository.existsByPravnoLiceIdAndStatusId(klijent.getId(),1) ||
-                    izracunavanjeRizikaService.daLiJeSifraRizicna(sifreDjelatnostiRepository.findBySifra(sifra)) ||
+                    izracunavanjeRizikaService.daLiJeSifraRizicna(sifreDjelatnostiRepository.findBySifra(sifraKlijenta)) ||
                     Boolean.TRUE.equals(procjenaRizikaRequestDto.getAutomatskiRizik())){//ovo boleaan true je tu da bi se null vrijednost shvatala kao false
                 nivoRizika=nivoRizikaRepository.findById(5).orElseThrow();
                 procjenaRizika.setAutomatskiRizik(true);
@@ -145,35 +163,45 @@ public class ProcjenaRizikaService {
 
 
     }
+    //update dostupan samo u prvih 7 dana od pravljenja procjene zbog eventualnih user errora.
 
 
 
     @Transactional
-    public ProcjenaRizikaResponseDto update(Integer id, ProcjenaRizikaRequestDto procjenaRizikaRequestDto, String username) {
+    public ProcjenaRizikaResponseDto update(Integer id, ProcjenaRizikaRequestDto procjenaRizikaRequestDto) {
         ProcjenaRizika postojeca= procjenaRizikaRepository.findById(id).orElseThrow();
+        if(provjeraVlasnistvaService.nadjiSvog(postojeca.getKorisnikKreator().getFirma().getId())){
 
-        if (LocalDateTime.now().isAfter(postojeca.getDatumProcjene().plusDays(7))) {
-            throw new IzmjenaNijeDozvoljenaException("Ne mozete mjenjati procjenu 7 dana nakon sto je  napravljena!");
+            if (LocalDateTime.now().isAfter(postojeca.getDatumProcjene().plusDays(7))) {
+                throw new IzmjenaNijeDozvoljenaException("Ne mozete mjenjati procjenu 7 dana nakon sto je  napravljena!");
+            }
+            postojeca.setObrazlozenje(procjenaRizikaRequestDto.getObrazlozenje());
+
+            postojeca.getOcjene().clear();
+
+            izracunavanjeOcjena(postojeca, procjenaRizikaRequestDto);
+
+            ProcjenaRizika sacuvana = procjenaRizikaRepository.save(postojeca);
+
+            return procjenaRizikaMapper.toResponse(sacuvana);
         }
-        postojeca.setObrazlozenje(procjenaRizikaRequestDto.getObrazlozenje());
+        else throw new ProvjeraVlasnistvaException("Nemate pravo promjeniti ovu procjenu. Ne pripada  vasoj firmi!");
 
-        postojeca.getOcjene().clear();
 
-        izracunavanjeOcjena(postojeca, procjenaRizikaRequestDto);
-
-        ProcjenaRizika sacuvana = procjenaRizikaRepository.save(postojeca);
-
-        return procjenaRizikaMapper.toResponse(sacuvana);
 
     }
 
     public void delete(Integer id) {
         ProcjenaRizika procjenaRizika = procjenaRizikaRepository.findById(id).orElseThrow();
-        if (LocalDateTime.now().isAfter(procjenaRizika.getDatumProcjene().plusDays(7))) {
-            throw new IzmjenaNijeDozvoljenaException("Ne mozete izbrisati procjenu 7 dana nakon sto je  napravljena!");
-        }
+        if (provjeraVlasnistvaService.nadjiSvog(procjenaRizika.getKorisnikKreator().getFirma().getId())) {
+            if (LocalDateTime.now().isAfter(procjenaRizika.getDatumProcjene().plusDays(7))) {
+                throw new IzmjenaNijeDozvoljenaException("Ne mozete izbrisati procjenu 7 dana nakon sto je  napravljena!");
+            }
 
             procjenaRizikaRepository.delete(procjenaRizika);
+        }
+        else throw new ProvjeraVlasnistvaException("Nemate pravo izbrisati procjenu. ne pripada  vasoj firmi!");
+
 
     }
 

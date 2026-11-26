@@ -36,5 +36,8 @@ public class FirmaRequestDto {
     @Email
     private String email;
 
+    @NotNull
+    @Min(1)
+    @Max(5)
     private Double posljedice;
 }
