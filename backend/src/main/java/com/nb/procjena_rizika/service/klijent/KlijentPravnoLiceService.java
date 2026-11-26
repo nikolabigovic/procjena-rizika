@@ -72,11 +72,7 @@ public class KlijentPravnoLiceService {
     }
 
     public KPLResponseDto findByPibAndFirmaId(String pib, Integer firmaId) {
-        if (provjeraVlasnistvaService.nadjiSvog(firmaId)) {
             return mapper.toResponse(repository.findByPibAndFirmaId(pib,firmaId));
-        }
-        else throw new ProvjeraVlasnistvaException("Ovaj klijent ne priprada vasoj firmi!");
-
     }
 
 
@@ -101,20 +97,21 @@ public class KlijentPravnoLiceService {
     }
 
     public List<KPLResponseDto> findByNaziv(String naziv) {
-        return repository.findByNaziv(naziv).stream().map(mapper::toResponse).toList();
+        return findByNazivAndFirmaId(naziv, trenutniKorisnikService.getFirma().getId());
+    }
+
+    public List<KPLResponseDto> findByNazivAndFirmaId(String naziv, Integer firmaId) {
+            return repository.findByNazivAndFirmaId(naziv, firmaId).stream().map(mapper::toResponse).toList();
     }
 
 
 
     public List<KPLResponseDto> findBySjediste(String sjediste) {
-        return findBySjedisteAndFirmaId(sjediste, this.trenutniKorisnikService.getFirma().getId());
+        return findBySjedisteAndFirmaId(sjediste, trenutniKorisnikService.getFirma().getId());
     }
 
     public List<KPLResponseDto> findBySjedisteAndFirmaId(String sjediste, Integer firmaId) {
-        if(provjeraVlasnistvaService.nadjiSvog(firmaId)){
             return repository.findBySjedisteAndFirmaId(sjediste, firmaId).stream().map(mapper::toResponse).toList();
-        }
-        else throw new ProvjeraVlasnistvaException("Ovaj klijent ne priprada vasoj firmi!");
     }
 
 
@@ -125,10 +122,7 @@ public class KlijentPravnoLiceService {
     }
 
     public List<KPLResponseDto> findBySifraDjelatnostiAndFirmaId(String sifraDjelatnosti,  Integer firmaId) {
-        if(provjeraVlasnistvaService.nadjiSvog(firmaId)){
-            return repository.findBySifraDjelatnostiAndFirmaId(sifraDjelatnosti, firmaId).stream().map(mapper::toResponse).toList();
-        }
-        else throw new ProvjeraVlasnistvaException("Ovaj klijent ne priprada vasoj firmi!");
+        return repository.findBySifraDjelatnostiAndFirmaId(sifraDjelatnosti, firmaId).stream().map(mapper::toResponse).toList();
     }
 
 
@@ -151,7 +145,6 @@ public class KlijentPravnoLiceService {
     public void deleteById(int id) {
         KlijentPravnoLice klijentPravnoLice = repository.findById(id).orElseThrow();
         if (provjeraVlasnistvaService.nadjiSvog(klijentPravnoLice.getFirma().getId())) {
-            repository.findById(id).orElseThrow();
             repository.deleteById(id);
         }
         else throw new ProvjeraVlasnistvaException("Ne mozete izbrisati klijente koji ne pripadaju vasoj firmi!");

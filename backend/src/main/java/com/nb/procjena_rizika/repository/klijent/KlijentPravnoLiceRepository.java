@@ -11,9 +11,11 @@ import java.util.List;
 public interface KlijentPravnoLiceRepository extends JpaRepository<KlijentPravnoLice,Integer> {
 
     List<KlijentPravnoLice> findByNaziv(String naziv);
+    List<KlijentPravnoLice> findByNazivAndFirmaId(String naziv, Integer firmaId);
+
+
     //KlijentPravnoLice findByPib(String pib);
     KlijentPravnoLice findByPibAndFirmaId(String pib, Integer firmaId);
-    //KlijentPravnoLice findById(int id);
 
     List<KlijentPravnoLice> findBySjediste(String sjediste);
     List<KlijentPravnoLice> findBySjedisteAndFirmaId(String sjediste, Integer firmaId);
