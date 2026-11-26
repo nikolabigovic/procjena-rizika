@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
-public class ProvjeraVlasnistvaService {
+public class ProvjeraVlasnistvaService {//ovaj servis je na kraju totalno redudantan ali cu ga ostaviti
 
     private final TrenutniKorisnikService trenutniKorisnikService;
 

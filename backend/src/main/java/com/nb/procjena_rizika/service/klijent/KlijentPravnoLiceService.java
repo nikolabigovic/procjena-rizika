@@ -34,11 +34,7 @@ public class KlijentPravnoLiceService {
     private final ProvjeraVlasnistvaService provjeraVlasnistvaService;
 
 
-//    public KlijentPravnoLiceService (KlijentPravnoLiceRepository repository) {
-//        this.repository = repository;
-//    }
-
-
+//ovjde je provjera vlasnistva na svaki endpoint
 
     //kreiranje
     public KPLResponseDto create(KPLRequestDto kplRequestDto) {
