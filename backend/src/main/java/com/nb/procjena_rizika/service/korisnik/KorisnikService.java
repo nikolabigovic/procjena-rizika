@@ -3,6 +3,7 @@ package com.nb.procjena_rizika.service.korisnik;
 
 import com.nb.procjena_rizika.dto.request.KorisnikRequestDto;
 import com.nb.procjena_rizika.dto.response.KorisnikResponseDto;
+import com.nb.procjena_rizika.exception.ProvjeraVlasnistvaException;
 import com.nb.procjena_rizika.mapper.KorisnikMapper;
 import com.nb.procjena_rizika.mapper.KorisnikMapperManual;
 import com.nb.procjena_rizika.model.korisnik.Korisnik;
@@ -10,6 +11,7 @@ import com.nb.procjena_rizika.repository.korisnik.FirmaRepository;
 import com.nb.procjena_rizika.repository.korisnik.KorisnikRepository;
 import com.nb.procjena_rizika.repository.korisnik.RoleRepository;
 import com.nb.procjena_rizika.service.klijent.TrenutniKorisnikService;
+import com.nb.procjena_rizika.service.logika.ProvjeraVlasnistvaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,11 +29,13 @@ public class KorisnikService {
     private final RoleRepository roleRepository;
     private final FirmaRepository firmaRepository;
     private final TrenutniKorisnikService trenutniKorisnikService;
+    private final ProvjeraVlasnistvaService  provjeraVlasnistvaService;
 
     //CREATE
 
     public KorisnikResponseDto create(KorisnikRequestDto korisnikRequestDto) {
         Korisnik korisnik = korisnikMapper.toEntity(korisnikRequestDto);
+
         korisnik.setRole(roleRepository.findById(korisnikRequestDto.getRoleId()).orElseThrow());
         korisnik.setFirma(trenutniKorisnikService.getFirma());
         korisnik.setPassword(passwordEncoder.encode(korisnik.getPassword()));
@@ -41,8 +45,12 @@ public class KorisnikService {
 
     // read
 
-    public KorisnikResponseDto findById(Integer id){
-        Korisnik korisnik = repository.findById(id).orElseThrow();
+    public KorisnikResponseDto findById(Integer id) {
+        return findByIdAndFirmaId(id, trenutniKorisnikService.getFirma().getId());
+    }
+
+    public KorisnikResponseDto findByIdAndFirmaId(Integer id, Integer firmaId) {
+        Korisnik korisnik = repository.findByIdAndFirmaId(id, firmaId).orElseThrow();
         return korisnikMapper.toResponse(korisnik);
 
     }
@@ -65,41 +73,38 @@ public class KorisnikService {
     public KorisnikResponseDto update(Integer id, KorisnikRequestDto dto) {
 
         Korisnik postojeci = repository.findById ( id).orElseThrow();
+        if(provjeraVlasnistvaService.nadjiSvog(postojeci.getFirma().getId())){
 
-//        if (dto.getIme() != null) {
-//            postojeci.setIme(dto.getIme());
-//        }
-//        if (dto.getPrezime() != null) {
-//            postojeci.setPrezime(dto.getPrezime());
-//        }
-//        if (dto.getEmail() != null) {
-//            postojeci.setEmail(dto.getEmail());
-//        }
-//        if (dto.getUsername() != null) {
-//            postojeci.setUsername(dto.getUsername());
-//        }
+            korisnikMapper.updateEntity(postojeci, dto);   //da se ne mora rucno kao gore
 
-        korisnikMapper.updateEntity(postojeci, dto);   //da se ne mora rucno kao gore
+            if (dto.getPassword()!=null && !dto.getPassword().isBlank()){
+                postojeci.setPassword(passwordEncoder.encode(dto.getPassword()));
+            }
 
-        if (dto.getPassword()!=null && !dto.getPassword().isBlank()){
-            postojeci.setPassword(passwordEncoder.encode(dto.getPassword()));
-        }
-
-        if (dto.getRoleId()!=null){
-            postojeci.setRole(roleRepository.findById(dto.getRoleId()).orElseThrow());
-        }
+            if (dto.getRoleId()!=null){
+                postojeci.setRole(roleRepository.findById(dto.getRoleId()).orElseThrow());
+            }
 
 
             postojeci.setFirma(trenutniKorisnikService.getFirma());
 
 
-        repository.save(postojeci);
-        return korisnikMapper.toResponse(postojeci);
+            repository.save(postojeci);
+            return korisnikMapper.toResponse(postojeci);
+
+        }
+        else throw new ProvjeraVlasnistvaException("Nemate pravo mjenjati korisnika koji ne pripada vasoj firmi!");
+
     }
 
     //delete
 
     public void deleteById(Integer id) {
-        repository.deleteById(id);
+        Korisnik korisnik = repository.findById (id).orElseThrow();
+        if(provjeraVlasnistvaService.nadjiSvog(korisnik.getFirma().getId())){
+            repository.deleteById(id);
+        }
+        else throw new ProvjeraVlasnistvaException("Nmate pravo brisati korisnika koji ne pripada vasoj firmi!");
+
     }
 }

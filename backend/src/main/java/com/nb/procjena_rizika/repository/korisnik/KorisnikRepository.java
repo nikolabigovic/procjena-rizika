@@ -19,6 +19,8 @@ public interface KorisnikRepository extends JpaRepository<Korisnik,Integer> {
 
     Optional<Korisnik> findOptionalByUsername(String username);
 
+    Optional<Korisnik> findByIdAndFirmaId(Integer id,Integer firmaId);
+
 
     
 }

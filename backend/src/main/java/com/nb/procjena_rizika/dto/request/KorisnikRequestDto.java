@@ -31,7 +31,7 @@ public class KorisnikRequestDto {
     @NotNull
     private Integer roleId;
 //    @NotNull
-//    private Integer firmaId; izbaceno jer sad imam trenutniKorisnikservice
+//    private Integer firmaId;
 
 
 }
