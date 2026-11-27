@@ -3,10 +3,12 @@ package com.nb.procjena_rizika.service.korisnik;
 
 import com.nb.procjena_rizika.dto.request.FirmaRequestDto;
 import com.nb.procjena_rizika.dto.response.FirmaResponseDto;
+import com.nb.procjena_rizika.exception.ProvjeraVlasnistvaException;
 import com.nb.procjena_rizika.mapper.FirmaMapper;
 import com.nb.procjena_rizika.model.korisnik.Firma;
 import com.nb.procjena_rizika.repository.korisnik.FirmaRepository;
 import com.nb.procjena_rizika.repository.rizik.RanjivostRepository;
+import com.nb.procjena_rizika.service.logika.ProvjeraVlasnistvaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ public class FirmaService {
     private final FirmaRepository repository;
     private final FirmaMapper mapper;
     private final RanjivostRepository ranjivostRepository;
+    private final ProvjeraVlasnistvaService provjeraVlasnistvaService;
     //create
 
     public FirmaResponseDto create(FirmaRequestDto firmaRequestDto) {
@@ -62,16 +65,24 @@ public class FirmaService {
 
     public FirmaResponseDto update(Integer id, FirmaRequestDto firmaRequestDto) {
         Firma postojeca = repository.findById (id).orElseThrow();
+        if(provjeraVlasnistvaService.nadjiSvog(postojeca.getId())){
+            mapper.updateEntity(postojeca, firmaRequestDto);
+            repository.save(postojeca);
+            return mapper.toResponse(postojeca);
+        }
+        else throw new ProvjeraVlasnistvaException("firma ne pripada vama!");
 
-        mapper.updateEntity(postojeca, firmaRequestDto);
-        repository.save(postojeca);
-        return mapper.toResponse(postojeca);
+
     }
 
     //delete
 
     public void delete(Integer id) {
-        repository.findById ( id).orElseThrow();
-        repository.deleteById(id);
+        if(provjeraVlasnistvaService.nadjiSvog(id)){
+            repository.findById ( id).orElseThrow();
+            repository.deleteById(id);
+        }
+        else throw new ProvjeraVlasnistvaException("firma ne pripada vama!");
+
     }
 }
